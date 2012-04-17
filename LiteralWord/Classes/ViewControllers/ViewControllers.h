@@ -1,0 +1,5 @@
+#import "VersesViewController.h"
+#import "HistoryViewController.h"
+#import "BookmarkViewController.h"
+#import "SearchViewController.h"
+#import "SearchViewController2.h"
