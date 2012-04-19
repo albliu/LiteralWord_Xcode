@@ -230,7 +230,9 @@ enum {
 
     UIButton * title = (UIButton *) self.navigationItem.titleView; 
 	[[self myDelegate] saveNote:title.titleLabel.text Body:obj ID:currNote_id];
-	
+
+    [self.editView resignFirstResponder];
+
     UIAlertView * alert = [[[UIAlertView alloc] initWithTitle:@"Saved" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] autorelease];
     [alert show];
 }
