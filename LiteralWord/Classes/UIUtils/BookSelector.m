@@ -5,8 +5,8 @@
 @implementation BookSelector
 
 
--(BookSelector *) initWithFrame:(CGRect) f RootView:(id) del { 
-    
+-(BookSelector *) initWithFrame:(CGRect) f RootView:(id) del Book:(int)bk{ 
+    initBook = bk;
     bookData = [BibleDataBaseController listBibleContents];
 	return [super initWithFrame: f RootView:del];
 }
@@ -36,7 +36,7 @@
 	tableView.autoresizingMask = ( UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleHeight) ; 
     tableView.rowHeight = BOOK_TABLE_ROW_HEIGHT;
 	[tableView reloadData];
-
+    [tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:initBook inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:NO];
 	[self.view addSubview:tableView];	
 	[tableView release];
 

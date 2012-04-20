@@ -10,9 +10,10 @@
 @interface BookSelector: SelectorViewController <UITableViewDelegate, UITableViewDataSource> {
 	int myHeight;
 	int myWidth;
+    int initBook;
     NSArray * bookData;
 
 }
 
--(BookSelector *) initWithFrame:(CGRect) f RootView:(id) del;
+-(BookSelector *) initWithFrame:(CGRect) f RootView:(id) del Book:(int)bk;
 @end

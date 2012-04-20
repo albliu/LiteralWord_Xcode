@@ -18,7 +18,7 @@
 
 	[super loadView];
     self.view.frame = myframe;
-    BookSelector * myView = [[BookSelector alloc] initWithFrame:myframe RootView:self];
+    BookSelector * myView = [[BookSelector alloc] initWithFrame:myframe RootView:self Book:select_book];
     myView.view.tag = BOOK_SELECTOR_VIEW;
 	[self.view addSubview:myView.view];
     //[myView dealloc];

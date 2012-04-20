@@ -35,9 +35,10 @@
 
 	[self loadClearView];
 	int myheight = ( (myHeight + NUMBER_CELL_SIDE/2) > ( rows * NUMBER_CELL_SIDE) ) ? (rows * NUMBER_CELL_SIDE) : myHeight + NUMBER_CELL_SIDE/2;	
+    int mywidth = (num < cols) ? num * NUMBER_CELL_SIDE : myWidth;
 
 
-	UIView * viewFrame = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.size.width / 2 - myWidth / 2 - NUMBER_TABLE_BORDER, self.view.frame.size.height / 2 - myheight / 2 - NUMBER_TABLE_BORDER, myWidth + 2*NUMBER_TABLE_BORDER, myheight + 2*NUMBER_TABLE_BORDER)];
+	UIView * viewFrame = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.size.width / 2 - mywidth / 2 - NUMBER_TABLE_BORDER, self.view.frame.size.height / 2 - myheight / 2 - NUMBER_TABLE_BORDER, mywidth + 2*NUMBER_TABLE_BORDER, myheight + 2*NUMBER_TABLE_BORDER)];
 	viewFrame.autoresizingMask = ( UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin| UIViewAutoresizingFlexibleBottomMargin) ; 
 	[viewFrame setBackgroundColor: [UIColor SHEET_BLUE]];
 
@@ -47,7 +48,7 @@
 	[self.view addSubview:viewFrame];
 	[viewFrame release];
 
-	UITableView * tableView = [[UITableView alloc] initWithFrame:CGRectMake(self.view.frame.size.width / 2 - myWidth / 2, self.view.frame.size.height / 2 - myheight / 2, myWidth, myheight) style:UITableViewStylePlain] ;
+	UITableView * tableView = [[UITableView alloc] initWithFrame:CGRectMake(self.view.frame.size.width / 2 - mywidth / 2, self.view.frame.size.height / 2 - myheight / 2, mywidth, myheight) style:UITableViewStylePlain] ;
 	[tableView setDataSource:self];
 	[tableView setDelegate:self];
 	[tableView setBackgroundColor: [UIColor clearColor]];
@@ -89,14 +90,16 @@
 	[cell setBackgroundColor: [UIColor clearColor]];
 	for (int i = 0; i < cols; i++) {
 		int value = (row * cols) + i + 1;	
-		if (value > num) break;
+		
 		UIButton * tmp = [UIButton buttonWithType:UIButtonTypeCustom];
 		tmp.frame = CGRectMake(i*NUMBER_CELL_SIDE, 0, NUMBER_CELL_SIDE, NUMBER_CELL_SIDE);
 		tmp.tag = value;
 		tmp.backgroundColor = [UIColor whiteColor]; 
-		[tmp setTitle:[NSString stringWithFormat:@"%d", value] forState: UIControlStateNormal];	
-		[tmp setTitleColor:[UIColor blackColor] forState: UIControlStateNormal];	
-		[tmp addTarget:self action:@selector(selectedVerse:) forControlEvents:UIControlEventTouchUpInside];
+        if (value <= num) {
+            [tmp setTitle:[NSString stringWithFormat:@"%d", value] forState: UIControlStateNormal];	
+            [tmp setTitleColor:[UIColor blackColor] forState: UIControlStateNormal];	
+            [tmp addTarget:self action:@selector(selectedVerse:) forControlEvents:UIControlEventTouchUpInside];
+        }
 		[cell.contentView addSubview:tmp];
 	}
 
