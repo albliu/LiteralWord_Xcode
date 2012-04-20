@@ -1,11 +1,15 @@
-#import "../BibleUtils/BibleUtils.h"
 #import "SelectorViewController.h"
-#define PASSAGESELECTOR_WIDTH 320 
-#define PASSAGESELECTOR_HEIGHT 216
 
-@interface PassageSelector: SelectorViewController <UIPickerViewDelegate> {
+enum {
+    BOOK_SELECTOR_VIEW = 600,
+    CHAPTER_SELECTOR_VIEW,
+};
+
+@interface PassageSelector: SelectorViewController <SelectorViewDelegate> {
 	int select_book;
 	int select_chapter;
+    
+    BOOL selected;
 }
 
 -(id) initWithFrame:(CGRect) f RootView:(id) v Book:(int) book Chapter:(int) chapter; 

@@ -1,14 +1,14 @@
-#import "VerseSelector.h"
+#import "ChapterSelector.h"
 
 
-@implementation VerseSelector
+@implementation ChapterSelector
 
 
 -(void) selectedVerse:(id) sender 
 {
 	UIButton * buttonView = (UIButton *) sender;
 	int verse = buttonView.tag;
-	[self.rootview gotoVerse:verse];
+	[self.rootview selectedbook:-1 chapter:verse];
 	[self dismissMyView];
 
 }

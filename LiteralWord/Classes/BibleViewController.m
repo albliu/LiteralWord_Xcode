@@ -207,15 +207,16 @@
 	NSLog(@"switch passage");
 
 	[[self myDelegate] lockScreen];
-	PassageSelector * selectMenu = [[PassageSelector alloc] initWithFrame: self.view.bounds RootView: self Book:curr_book Chapter:curr_chapter ]; 
-	[self.view addSubview:selectMenu.view];
+	PassageSelector * selectMenu = [[PassageSelector alloc] initWithFrame: self.view.frame RootView: self Book:curr_book Chapter:curr_chapter ]; 
+
+    [self.view addSubview:selectMenu.view];
 
 }
 
 - (void) verseselector:(id) ignored {
 	
 	[[self myDelegate] lockScreen];
-	VerseSelector * verseMenu = [[VerseSelector alloc] initWithFrame: self.view.bounds RootView:self Verses:[BibleDataBaseController getVerseCount:[[BibleDataBaseController getBookNameAt:curr_book] UTF8String] chapter:curr_chapter]]; 
+	VerseSelector * verseMenu = [[VerseSelector alloc] initWithFrame: self.view.bounds RootView:self Numbers:[BibleDataBaseController getVerseCount:[[BibleDataBaseController getBookNameAt:curr_book] UTF8String] chapter:curr_chapter]]; 
 	[self.view addSubview:verseMenu.view];
 
 }
