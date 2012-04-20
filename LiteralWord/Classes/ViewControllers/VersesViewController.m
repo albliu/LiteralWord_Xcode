@@ -5,7 +5,7 @@
 @implementation VersesViewController
 @synthesize delegate=_delegate;
 @synthesize myData=_myData;
-
+@synthesize rootview;
 
 - (id) initWithDelegate:(id) bibleView Data:(VersesData *) data {
 	self = [ super initWithStyle: UITableViewStylePlain];

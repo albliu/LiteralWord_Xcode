@@ -9,6 +9,7 @@
 
 	[self.delegate selectedbook:entry.book_index chapter:entry.chapter verse:[entry.verses intValue]];
 
+    [self.rootview SelectedEntry];
 	[self.navigationController popToRootViewControllerAnimated:YES];
 }
 

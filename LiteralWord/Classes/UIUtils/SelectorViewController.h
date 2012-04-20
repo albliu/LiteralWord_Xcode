@@ -1,6 +1,7 @@
 #define MYBUTTON_HEIGHT 40
 
 @protocol SelectorViewDelegate
+@optional
 - (void) selectedbook:(int) bk chapter:(int) ch;
 - (void) SelectorViewDismissed;
 - (void) gotoVerse:(int) v; 

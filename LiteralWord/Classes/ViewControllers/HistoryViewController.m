@@ -27,7 +27,9 @@
 
 	[self.delegate selectedbook:entry.book_index chapter:entry.chapter];
 
+    [self.rootview SelectedEntry];
 	[self.navigationController popToRootViewControllerAnimated:YES];
+    
 }
 
 @end

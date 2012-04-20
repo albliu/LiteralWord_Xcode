@@ -171,6 +171,7 @@ int currRotation;
 	myBar.text = nil;
     searchResults = nil;
 	[self.tableView reloadData];
+    [self.tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
 }
 
 

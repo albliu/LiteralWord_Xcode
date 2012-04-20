@@ -69,8 +69,4 @@
     selected = NO;
 }
 
-- (void) gotoVerse:(int)v {
-    
-    // do nothing
-}
 @end
