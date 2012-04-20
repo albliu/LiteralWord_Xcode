@@ -55,17 +55,20 @@
 	[toolbarItems addObject:flex];
 	[flex release];
 
-	UIBarButtonItem *myhistory = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"history.png"] style:UIBarButtonItemStylePlain target:self action:@selector(showhistory:)];
+	UIBarButtonItem *myhistory = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"history.png"] style:UIBarButtonItemStylePlain target:self action:@selector(subViews:)];
+    myhistory.tag = HISTORY_VIEW;
 	myhistory.width = 35.0f;
 	[toolbarItems addObject:myhistory];
 	[myhistory release];
 
-	UIBarButtonItem *bookmark = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"bookmark.png"] style:UIBarButtonItemStylePlain target:self action:@selector(bookmark:)];
+	UIBarButtonItem *bookmark = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"bookmark.png"] style:UIBarButtonItemStylePlain target:self action:@selector(subViews:)];
+    bookmark.tag = BOOKMARK_VIEW;
 	bookmark.width = 35.0f;
 	[toolbarItems addObject:bookmark];
 	[bookmark release];
 
-	UIBarButtonItem *memoryverse = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"memory.png"] style:UIBarButtonItemStylePlain target:self action:@selector(memverse:)];
+	UIBarButtonItem *memoryverse = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"memory.png"] style:UIBarButtonItemStylePlain target:self action:@selector(subViews:)];
+    memoryverse.tag = MEMORYVERSE_VIEW;
 	memoryverse.width = 35.0f;
 	[toolbarItems addObject:memoryverse];
 	[memoryverse release];
@@ -75,13 +78,15 @@
 	[toolbarItems addObject:fullscreen];
 	[fullscreen release];
 
-	UIBarButtonItem *search = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"search.png"] style:UIBarButtonItemStylePlain target:self action:@selector(search:)];
+	UIBarButtonItem *search = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"search.png"] style:UIBarButtonItemStylePlain target:self action:@selector(subViews:)];
+    search.tag = SEARCH_VIEW;
 	search.width = 35.0f;
 	[toolbarItems addObject:search];
 	[search release];
 
 
 	UIBarButtonItem *mynotes = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"edit.png"] style:UIBarButtonItemStylePlain target:self action:@selector(notes:)];
+    mynotes.tag = MYNOTE_VIEW;
 	mynotes.width = 35.0f;
 	[toolbarItems addObject:mynotes];
 	[mynotes release];
@@ -145,36 +150,77 @@
 }
 #pragma mark - Button Actions
 
-- (void) bookmark:(id)ignored {
-
-	BookmarkViewController * myView = [[BookmarkViewController alloc] initWithDelegate: self.bibleView Data:bookmarks] ;
-	myView.title = @"Bookmarks"; 
-	[self.navigationController pushViewController:myView animated:YES];
-	[myView release];
+- (void) clearPopovers {
+    if (popover_currview != -1) {
+        [self SelectedEntry];
+    }
+    
 }
 
-- (void) search:(id)ignored {
+- (void) subViews:(UIBarButtonItem *) but{
+    
+    BOOL ret = (popover_currview == but.tag);
+    [self clearPopovers];
+    if (ret) return;
+    
+    
+    VersesViewController * myView;
+    switch (but.tag) {
+        case SEARCH_VIEW:
+            myView = self.searchView;
+            break;
+        case MEMORYVERSE_VIEW:
+            myView = [[VersesViewController alloc] initWithDelegate:self.bibleView Data:memory] ;
+            myView.title = @"Memory Verses"; 
+            break;
+        case BOOKMARK_VIEW:
+            myView = [[BookmarkViewController alloc] initWithDelegate: self.bibleView Data:bookmarks] ;
+            myView.title = @"Bookmarks";
+            break;
+        case HISTORY_VIEW:
+            myView = [[HistoryViewController alloc] initWithDelegate: self.bibleView Data:history] ;
+            myView.title = @"History"; 
+            break;
+        default:
+            return;
+            break;
+    }
+    
+    popover_currview = but.tag;
+    myView.rootview = self;
+    UINavigationController * navView= [[UINavigationController alloc] initWithRootViewController:myView];
 
-	[self.navigationController pushViewController:self.searchView animated:YES];
-
+    
+    if (but.tag != SEARCH_VIEW) {
+        [myView release];
+    }
+        
+    popover = [[UIPopoverController alloc] initWithContentViewController:navView];
+    [navView release];
+    popover.delegate = self;
+    
+    [popover presentPopoverFromBarButtonItem:but permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];    
 }
 
-- (void) showhistory:(id)ignored {
-
-	HistoryViewController * historyView = [[HistoryViewController alloc] initWithDelegate: self.bibleView Data:history] ;
-	historyView.title = @"History"; 
-	[self.navigationController pushViewController:historyView animated:YES];
-	[historyView release];
-
+-(void) SelectedEntry {
+    
+    [popover dismissPopoverAnimated:YES];
+    [popover release];
+    popover = nil;
+    popover_currview = -1;
 }
+
+
 - (void) notes:(id)ignored {
 
+    [self clearPopovers];
 	NotesViewController * myView = [[NotesViewController alloc] initWithNotes:notes] ;
 	myView.title = @"Notes"; 
 	[self.navigationController pushViewController:myView animated:YES];
 	[myView release];
 
 }
+
 - (void) fullscreen:(id)ignored {
 
 
@@ -199,16 +245,11 @@
 	}
 
 }
-
-- (void) memverse:(id)ignored {
-
-	VersesViewController * myView = [[VersesViewController alloc] initWithDelegate:self.bibleView Data:memory] ;
-	myView.title = @"Memory Verses"; 
-	[self.navigationController pushViewController:myView animated:YES];
-	[myView release];
-
+#pragma mark UIPopoverController delegate
+- (BOOL) popoverControllerShouldDismissPopover:(UIPopoverController *)popoverController {
+    popover_currview = -1;
+    return YES;
 }
-
 
 #pragma mark UIViewController delegate
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation

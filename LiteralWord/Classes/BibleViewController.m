@@ -207,7 +207,7 @@
 	NSLog(@"switch passage");
 
 	[[self myDelegate] lockScreen];
-	PassageSelector * selectMenu = [[PassageSelector alloc] initWithFrame: self.view.frame RootView: self Book:curr_book Chapter:curr_chapter ]; 
+	PassageSelector * selectMenu = [[PassageSelector alloc] initWithFrame: self.view.bounds RootView:self Book:curr_book Chapter:curr_chapter ]; 
 
     [self.view addSubview:selectMenu.view];
 

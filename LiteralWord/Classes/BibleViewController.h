@@ -26,6 +26,7 @@ enum {
 };
 
 @protocol BibleViewDelegate
+@optional
 - (VerseEntry *) initPassage;
 - (void) addToHist:(int) book Chapter:(int) chapter;
 - (void) addToMem:(int) book Chapter:(int) chapter Verses:(NSArray *) ver Text:(NSString *) txt;
