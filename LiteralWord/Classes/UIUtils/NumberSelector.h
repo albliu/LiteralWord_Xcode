@@ -14,5 +14,5 @@
 	int num;
 }
 
--(NumberSelector *) initWithFrame:(CGRect) f RootView:(id) del Numbers:(int) v ;
+-(id) initWithFrame:(CGRect) f RootView:(id) del Numbers:(int) v ;
 @end
