@@ -7,7 +7,6 @@
 //
 
 #import "NotesEditViewController.h"
-#import "../UIUtils/UIUtils.h"
 
 enum {
 	NOT_NEEDED = 500,
