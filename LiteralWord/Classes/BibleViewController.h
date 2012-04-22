@@ -1,5 +1,5 @@
 #import "BibleUtils/BibleUtils.h"
-#import "UIUtils/UIUtils.h"
+#import "PassageMenu/PassageMenu.h"
 #import "MyGestureRecognizer.h"
 
 #define SCALE_DEFAULT_TAG "my_scale"
