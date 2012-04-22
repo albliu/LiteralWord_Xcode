@@ -1,5 +1,5 @@
 #import "PassageSelector.h"
-#import "BibleDataBaseController.h"
+#import "BibleUtils/BibleDataBaseController.h"
 #import "BookSelector.h"
 #import "ChapterSelector.h"
 
