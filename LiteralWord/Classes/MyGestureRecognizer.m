@@ -4,6 +4,26 @@
 @implementation MyGestureRecognizer
 @synthesize delegate = _delegate;
 
++ (void)goThroughSubViewFrom:(UIView *)view {
+    for (UIView *v in [view subviews])
+    {
+        if (v != view)
+        {
+            [self goThroughSubViewFrom:v];
+        }
+    }
+    for (UIGestureRecognizer *reco in [view gestureRecognizers])
+    {
+        if ([reco isKindOfClass:[UITapGestureRecognizer class]])
+        {
+            if ([(UITapGestureRecognizer *)reco numberOfTapsRequired] == 2)
+            {
+                [view removeGestureRecognizer:reco];
+            }
+        }
+    }
+}
+
 -(MyGestureRecognizer *) initWithDelegate:(id) delegate View:(UIView *) view {
 
 	self.delegate = delegate;
@@ -73,6 +93,9 @@
 
 }
 #pragma mark GestureRecognizerDelegate
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
+    return YES;
+}
 
 - (BOOL) gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
     return YES;

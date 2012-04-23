@@ -5,6 +5,10 @@
 
 #define BORDER_OFFSET 2
 
+#define PASSAGE_MENU_WIDTH 200
+#define SPLIT_BUTTON_WIDTH 15
+#define SPLIT_RIGHT_SPACE 8
+
 enum {
     HISTORY_VIEW = 900,
     BOOKMARK_VIEW,
@@ -28,6 +32,7 @@ enum {
 
 }
 
+@property (nonatomic) BOOL dualView;
 @property (nonatomic, retain) BibleViewController * bibleView;
 @property (nonatomic, retain) BibleViewController * secbibleView;
 @property (nonatomic, retain) SearchViewController * searchView;

@@ -4,6 +4,7 @@
 
 @implementation SplitScreenViewController
 
+@synthesize dualView;
 @synthesize bibleView=_bibleView;
 @synthesize secbibleView=_secbibleView;
 @synthesize searchView=_searchView;
@@ -40,73 +41,66 @@
 	self.navigationController.navigationBar.tintColor = [UIColor SHEET_BLUE ];
 
 
-
-	// Show 6 buttons
-
-	UIToolbar *tools = [[UIToolbar alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 240.0f, 44.01f)];
-	tools.clearsContextBeforeDrawing = NO;
-	tools.clipsToBounds = NO;
-	tools.barStyle = -1;
-	tools.autoresizingMask = (UIViewAutoresizingFlexibleHeight);	
-
-	NSMutableArray * toolbarItems = [[NSMutableArray alloc] initWithCapacity:1];
-
-	UIBarButtonItem *flex = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
-	[toolbarItems addObject:flex];
-	[flex release];
-
 	UIBarButtonItem *myhistory = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"history.png"] style:UIBarButtonItemStylePlain target:self action:@selector(subViews:)];
     myhistory.tag = HISTORY_VIEW;
 	myhistory.width = 35.0f;
-	[toolbarItems addObject:myhistory];
-	[myhistory release];
+
 
 	UIBarButtonItem *bookmark = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"bookmark.png"] style:UIBarButtonItemStylePlain target:self action:@selector(subViews:)];
     bookmark.tag = BOOKMARK_VIEW;
 	bookmark.width = 35.0f;
-	[toolbarItems addObject:bookmark];
-	[bookmark release];
+
 
 	UIBarButtonItem *memoryverse = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"memory.png"] style:UIBarButtonItemStylePlain target:self action:@selector(subViews:)];
     memoryverse.tag = MEMORYVERSE_VIEW;
 	memoryverse.width = 35.0f;
-	[toolbarItems addObject:memoryverse];
-	[memoryverse release];
+
 	
 	UIBarButtonItem *fullscreen = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"split.png"] style:UIBarButtonItemStylePlain target:self action:@selector(fullscreen:)];
 	fullscreen.width = 35.0f;
-	[toolbarItems addObject:fullscreen];
-	[fullscreen release];
+
 
 	UIBarButtonItem *search = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"search.png"] style:UIBarButtonItemStylePlain target:self action:@selector(subViews:)];
     search.tag = SEARCH_VIEW;
 	search.width = 35.0f;
-	[toolbarItems addObject:search];
-	[search release];
+
 
 
 	UIBarButtonItem *mynotes = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"edit.png"] style:UIBarButtonItemStylePlain target:self action:@selector(notes:)];
     mynotes.tag = MYNOTE_VIEW;
 	mynotes.width = 35.0f;
-	[toolbarItems addObject:mynotes];
+
+
+	self.navigationItem.titleView = self.bibleView.passageTitle;
+
+    
+    UIToolbar *tools = [[UIToolbar alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 120.0f, 44.01f)];
+	tools.barStyle = -1;
+	tools.autoresizingMask = (UIViewAutoresizingFlexibleHeight);
+    [tools setItems:[NSArray arrayWithObjects:search, myhistory, bookmark, nil]];
+    
+    UIBarButtonItem * sidebar = [[UIBarButtonItem alloc] initWithCustomView:tools];
+    [tools release];
+    self.navigationItem.leftBarButtonItem = sidebar;
+    [sidebar release];
+    
+    tools = [[UIToolbar alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 135.0f, 44.01f)];
+	tools.barStyle = -1;
+	tools.autoresizingMask = (UIViewAutoresizingFlexibleHeight);
+    [tools setItems:[NSArray arrayWithObjects:fullscreen, memoryverse, mynotes, nil]];
+    
+    sidebar = [[UIBarButtonItem alloc]initWithCustomView:tools];
+    [tools release];
+    self.navigationItem.rightBarButtonItem = sidebar;
+    
+    [sidebar release];
+
+	[myhistory release];
+	[bookmark release];
+	[memoryverse release];
+	[fullscreen release];
+	[search release];
 	[mynotes release];
-
-	flex = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
-	[toolbarItems addObject:flex];
-	[flex release];
-
-	[tools setItems:toolbarItems animated:NO]; 
-	[tools sizeToFit];
-	[toolbarItems release];
-
-	self.navigationItem.titleView = tools;
-	[tools release];
-	
-	UIBarButtonItem *leftButtons = [[UIBarButtonItem alloc] initWithCustomView:self.bibleView.passageTitle];
-	self.navigationItem.leftBarButtonItem = leftButtons;
-	[leftButtons release];
-
-
 
 
 }
@@ -176,10 +170,12 @@
         case BOOKMARK_VIEW:
             myView = [[BookmarkViewController alloc] initWithDelegate: self.bibleView Data:bookmarks] ;
             myView.title = @"Bookmarks";
+            if (dualView) myView.delegate = self.secbibleView;
             break;
         case HISTORY_VIEW:
             myView = [[HistoryViewController alloc] initWithDelegate: self.bibleView Data:history] ;
             myView.title = @"History"; 
+            if (dualView) myView.delegate = self.secbibleView;
             break;
         default:
             return;
@@ -221,28 +217,91 @@
 
 }
 
+
+- (UIView *) splitscreenSelector {
+    
+    // figure out what to do with split view
+    UIView * mySelector = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 2*PASSAGE_MENU_WIDTH + SPLIT_BUTTON_WIDTH + SPLIT_RIGHT_SPACE, 44.01f)];
+    mySelector.autoresizingMask = (UIViewAutoresizingFlexibleHeight);
+    
+    UIToolbar *tools = [[UIToolbar alloc] initWithFrame:CGRectMake(0.0f, 0.0f, PASSAGE_MENU_WIDTH, 44.01f)];
+    tools.barStyle = -1;
+    tools.autoresizingMask = (UIViewAutoresizingFlexibleHeight);	
+    
+    UIBarButtonItem *flex = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+    UIBarButtonItem * leftPassage = [[UIBarButtonItem alloc] initWithCustomView:self.bibleView.passageTitle];
+    [self.bibleView.passageTitle.titleLabel setTextAlignment:UITextAlignmentRight];
+    [tools setItems:[NSArray arrayWithObjects:flex, leftPassage, nil]];
+    [leftPassage release]; 
+    [flex release];
+    
+    [mySelector addSubview:tools];
+    [tools release];
+    
+    UIBarButtonItem * div = flex = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
+    div.width = SPLIT_BUTTON_WIDTH;
+    tools = [[UIToolbar alloc] initWithFrame:CGRectMake(PASSAGE_MENU_WIDTH, 0.0f, SPLIT_BUTTON_WIDTH, 44.01f)];
+    tools.barStyle = -1;
+    tools.autoresizingMask = (UIViewAutoresizingFlexibleHeight); 
+    [tools setItems:[NSArray arrayWithObject:div]];
+    [div release];
+    
+    [mySelector addSubview:tools];
+    [tools release];
+    
+    tools = [[UIToolbar alloc] initWithFrame:CGRectMake(PASSAGE_MENU_WIDTH + SPLIT_BUTTON_WIDTH + SPLIT_RIGHT_SPACE, 0.0f, PASSAGE_MENU_WIDTH, 44.01f)];
+    tools.barStyle = -1;
+    tools.autoresizingMask = (UIViewAutoresizingFlexibleHeight);	
+    
+    flex = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+    
+    UIBarButtonItem * rightPassage = [[UIBarButtonItem alloc] initWithCustomView:self.secbibleView.passageTitle];
+    [self.secbibleView.passageTitle.titleLabel setTextAlignment:UITextAlignmentLeft];
+    
+    [tools setItems:[NSArray arrayWithObjects:rightPassage, flex, nil]];
+    [rightPassage release]; 
+    [flex release];
+    
+    [mySelector addSubview:tools];
+    [tools release];
+
+    return mySelector;
+}
+
 - (void) fullscreen:(id)ignored {
 
 
-	if (self.bibleView.view.frame.size.width == (self.view.bounds.size.width/2 - 2 * BORDER_OFFSET)) {
+	if (dualView == YES) {
 		self.bibleView.view.frame = CGRectMake(BORDER_OFFSET, 0, self.view.bounds.size.width - 2 * BORDER_OFFSET, self.view.bounds.size.height);
-		
-		self.navigationItem.rightBarButtonItem = nil;
+
+        self.navigationItem.titleView = self.bibleView.passageTitle;
+        [self.bibleView.passageTitle.titleLabel setTextAlignment:UITextAlignmentCenter];
 		[self.secbibleView.view removeFromSuperview];
 		[self.secbibleView release];
 		_secbibleView = nil;
+        
+        dualView = NO;
+        
+        self.searchView.delegate = self.bibleView;
+        
+        
 	} else {
 		self.bibleView.view.frame = CGRectMake(BORDER_OFFSET, 0, self.view.bounds.size.width/2 - 2 * BORDER_OFFSET, self.view.bounds.size.height);
-	
+        
+        UIView  * selector = [self splitscreenSelector];
+        self.navigationItem.titleView = selector;
+        [selector release];
+        
 		[self.view addSubview:self.secbibleView.view];
 		self.secbibleView.view.autoresizingMask = (UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
 		[self.secbibleView.view.layer setCornerRadius:8.0f];
 		[self.secbibleView.view.layer setMasksToBounds:YES];
+        dualView = YES;
 
-		UIBarButtonItem *rightButtons = [[UIBarButtonItem alloc] initWithCustomView:self.secbibleView.passageTitle];
-		self.navigationItem.rightBarButtonItem = rightButtons;
-		[rightButtons release];
-	}
+        self.searchView.delegate = self.secbibleView;
+
+        
+    }
 
 }
 #pragma mark UIPopoverController delegate
@@ -260,13 +319,16 @@
 
 - (id) init {
 
-	history = [[HistoryData alloc] init];
-	bookmarks = [[BookmarkData alloc] init];
-	memory = [[MemoryVersesData alloc] init];
-	notes = [[NotesData alloc] init];
-
-
-	return [super init];
+    id me = [super init];
+    
+    if (me) {
+        history = [[HistoryData alloc] init];
+        bookmarks = [[BookmarkData alloc] init];
+        memory = [[MemoryVersesData alloc] init];
+        notes = [[NotesData alloc] init];
+        dualView = NO;
+    }
+	return me;
 }	
 
 - (void)loadView {
@@ -279,6 +341,7 @@
 	self.bibleView.view.autoresizingMask = (UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
 	[self.bibleView.view.layer setCornerRadius:8.0f];
 	[self.bibleView.view.layer setMasksToBounds:YES];
+    dualView = NO;
 
 }
 -(void) viewDidLoad {

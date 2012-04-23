@@ -19,11 +19,17 @@
 	return _passageTitle;
 
 }
+
+
+
 -(UIWebView *) webView{
 	if (_webView == nil) { 
 		_webView = [[UIWebView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height)];
 		_webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
 		[_webView setDelegate:self];
+        _webView.scrollView.bounces = NO;
+        
+        
 	}
 	return _webView;
 
@@ -327,7 +333,10 @@
 - (void) viewDidLoad {
 
 	[super viewDidLoad];
-
+    
+    //remove original double tap handler
+    [MyGestureRecognizer goThroughSubViewFrom:_webView];
+    
 	gestures = [[MyGestureRecognizer alloc] initWithDelegate:self View:self.webView];
 
 	// load last passage

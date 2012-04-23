@@ -182,6 +182,7 @@ enum {
         UITextField *entered = [(UIAlertView *) alertView textFieldAtIndex:0];
         UIButton * title = (UIButton *) self.navigationItem.titleView;
         [title setTitle:entered.text forState:UIControlStateNormal];
+        [title sizeToFit];
     }
 }
 
@@ -223,6 +224,9 @@ enum {
 
 - (void) save:(id) ignored {
     
+    //[self.editView stringByEvaluatingJavaScriptFromString:@"document.activeElement.blur()"];
+    [self.editView endEditing:YES];
+    
 	NSString *jsString = [[NSString alloc] initWithUTF8String:"editor.getHTML()"];
 	NSString * obj = [self.editView stringByEvaluatingJavaScriptFromString:jsString];  
 	[jsString release];
@@ -230,7 +234,7 @@ enum {
     UIButton * title = (UIButton *) self.navigationItem.titleView; 
 	[[self myDelegate] saveNote:title.titleLabel.text Body:obj ID:currNote_id];
 
-    [self.editView resignFirstResponder];
+
 
     UIAlertView * alert = [[[UIAlertView alloc] initWithTitle:@"Saved" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] autorelease];
     [alert show];
@@ -239,11 +243,6 @@ enum {
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
 	return YES;
-}
-
-- (void)webViewDidFinishLoad:(UIWebView *)webView {
-       NSLog(@"didFinish: %@; stillLoading:%@", [[webView request]URL],
-            (webView.loading?@"NO":@"YES"));
 }
 
 @end
