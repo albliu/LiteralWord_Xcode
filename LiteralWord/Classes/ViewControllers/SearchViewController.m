@@ -162,7 +162,10 @@ int currRotation;
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar
 {
 
-    searchResults = [BibleDataBaseController searchString:[searchBar.text UTF8String]];
+    NSArray * filter;
+    if (searchFilter.filterCategory) filter = searchFilter.myCategoryView.filterResults;
+    else filter = searchFilter.myBookView.filterResults;
+    searchResults = [BibleDataBaseController searchString:[searchBar.text UTF8String] withFilter:filter isCat:searchFilter.filterCategory];
 	[searchBar resignFirstResponder];
   
     [self.tableView reloadData];
@@ -177,6 +180,7 @@ int currRotation;
     [searchData release];
      [mySearchBar release];
     searchResults = nil;
+    [searchFilter release];
     [myLoading release];
     [super dealloc];
 }

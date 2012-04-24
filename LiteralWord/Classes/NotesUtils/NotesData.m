@@ -42,23 +42,26 @@
     
 }
 
-- (void) addToList:(NoteEntry *) note {
+- (int) addToList:(NoteEntry *) note {
 	if (note.rowid != NEW_NOTE) {
 	    [self.myDB updateNote:note];
             [self.myNotes replaceObjectAtIndex:[self findNote:note.rowid] withObject:note];
 	} else {
             note.rowid = [self.myDB addNote:[note.title UTF8String] Body:[note.body UTF8String]];
             [self.myNotes addObject:note];
-        }
+    }
+    
+    return note.rowid;
 }
 
 
-- (void) addNewNote:(NSString *) title Body:(NSString *) body ID:(int) i {
+- (int) addNewNote:(NSString *) title Body:(NSString *) body ID:(int) i {
 		
 	NoteEntry * entry = [[NoteEntry alloc] initWithTitle:title Body: body ID:i];
-	[self addToList:entry];
+	int ret = [self addToList:entry];
 	[entry release];	
 
+    return ret;
 }
 
 - (void) dealloc {

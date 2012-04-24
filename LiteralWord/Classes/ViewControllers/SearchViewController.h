@@ -18,6 +18,7 @@
     NSArray * searchResults;
     UIActivityIndicatorView * myLoading;
     UISearchBar * mySearchBar;
+    
     SearchFilterViewController * searchFilter;
  }
 

@@ -12,8 +12,9 @@
 #define NOTES_TOOLBAR_HEIGHT 35 
 #define TITLE_MAX_CHAR 25
 #define NEW_NOTE -1
+#define TOOLBAR_TAG 1000
 @protocol NotesEditDelegate
-- (void) saveNote: (NSString *) title Body:(NSString *) body ID:(int) i;
+- (int) saveNote: (NSString *) title Body:(NSString *) body ID:(int) i;
 @end
 
 

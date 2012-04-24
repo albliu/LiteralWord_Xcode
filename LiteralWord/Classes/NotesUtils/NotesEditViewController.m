@@ -112,7 +112,7 @@ enum {
 
 -(UIWebView *) editView{
 	if (_editView == nil) { 
-		_editView = [[UIWebView alloc] initWithFrame:CGRectMake(0, NOTES_TOOLBAR_HEIGHT, self.view.frame.size.width, self.view.frame.size.height)];
+		_editView = [[UIWebView alloc] initWithFrame:CGRectMake(0, NOTES_TOOLBAR_HEIGHT, self.view.frame.size.width, self.view.frame.size.height - NOTES_TOOLBAR_HEIGHT)];
 		_editView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
 		[_editView setDelegate:self];
 	}
@@ -136,6 +136,7 @@ enum {
     [self.view addSubview:self.editView];
 
     UIToolbar * toolbar = [self setupEditToolBar];
+    toolbar.tag = TOOLBAR_TAG;
     [self.view addSubview:toolbar]; 
     [toolbar release];
     
@@ -162,11 +163,45 @@ enum {
     [self.navigationController setToolbarHidden:YES];
     
     
-    UIBarButtonItem *save = [[UIBarButtonItem alloc] initWithTitle:@"save" style:UIBarButtonItemStyleBordered target:self action:@selector(save:)];
-    self.navigationItem.rightBarButtonItem = save;
+    UIBarButtonItem *save = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"Save.png"] style:UIBarButtonItemStylePlain target:self action:@selector(save:)];
+    save.width = 30.f;
+    
+    UIBarButtonItem * fonts = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"Fonts.png"] style:UIBarButtonItemStylePlain target:self action:@selector(editToolBar:)];
+    fonts.width = 30.f;
+    
+    UIToolbar *tools = [[UIToolbar alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 80.0f, 44.01f)];
+	tools.barStyle = -1;
+	tools.autoresizingMask = (UIViewAutoresizingFlexibleHeight);
+    [tools setItems:[NSArray arrayWithObjects:fonts, save, nil]];
     [save release];
+    [fonts release];
+    
+    UIBarButtonItem * sidebar = [[UIBarButtonItem alloc] initWithCustomView:tools];
+    [tools release];
+    
+    self.navigationItem.rightBarButtonItem = sidebar;
+    [sidebar release];
+    
+    [self editToolBar:nil];
+   
 }
 
+- (void) editToolBar: (id) ignore {
+    UIToolbar * myToolBar = (UIToolbar *) [self.view viewWithTag:TOOLBAR_TAG];
+    
+    if (myToolBar.hidden) {
+        
+        myToolBar.hidden = NO;
+        self.editView.frame = CGRectMake(0, NOTES_TOOLBAR_HEIGHT, self.view.frame.size.width, self.view.frame.size.height - NOTES_TOOLBAR_HEIGHT);
+    } else {
+        
+        myToolBar.hidden = YES;
+        self.editView.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height);        
+    }
+    
+    
+    
+}
 - (void) changeTitle:(UIButton *) button {
     UIAlertView *prompt = [[[UIAlertView alloc]initWithTitle:@"Title" message:nil delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Done", nil] autorelease];
     [prompt setAlertViewStyle:UIAlertViewStylePlainTextInput];
@@ -224,7 +259,6 @@ enum {
 
 - (void) save:(id) ignored {
     
-    //[self.editView stringByEvaluatingJavaScriptFromString:@"document.activeElement.blur()"];
     [self.editView endEditing:YES];
     
 	NSString *jsString = [[NSString alloc] initWithUTF8String:"editor.getHTML()"];
@@ -232,7 +266,9 @@ enum {
 	[jsString release];
 
     UIButton * title = (UIButton *) self.navigationItem.titleView; 
-	[[self myDelegate] saveNote:title.titleLabel.text Body:obj ID:currNote_id];
+	
+    NSLog(@"curr id : %d", currNote_id);
+    currNote_id = [[self myDelegate] saveNote:title.titleLabel.text Body:obj ID:currNote_id];
 
 
 

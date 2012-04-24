@@ -99,10 +99,10 @@
 
 
 
-- (void) saveNote: (NSString *) title Body:(NSString *) body ID:(int) i {
-	[self.myData addNewNote:title Body:body ID:i];	
+- (int) saveNote: (NSString *) title Body:(NSString *) body ID:(int) i {
+	int new_id = [self.myData addNewNote:title Body:body ID:i];	
 	[self.tableView reloadData];	// populate our table's data
-
+    return new_id;
 }
 
 - (void)dealloc {

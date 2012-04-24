@@ -40,5 +40,6 @@
 
 // returns passage that inlucde the string
 + (NSArray *) searchString:(const char *) string; 
++ (NSArray *) searchString:(const char *) string withFilter: (NSArray *) filter isCat:(BOOL) cat;
 + (NSString *) searchStringToHtml:(const char *) string; 
 @end

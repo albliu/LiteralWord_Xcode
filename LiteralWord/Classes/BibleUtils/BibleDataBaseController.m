@@ -1,6 +1,7 @@
 #import "BibleDataBaseController.h"
 #import "VerseEntry.h"
 #import "NasbDataBaseHeaders.h"
+#import "BibleCategory.h"
 #import "BibleHtmlGenerator.h"
 
 @implementation QueryResults 
@@ -185,20 +186,54 @@ static sqlite3 *bibleDB;
 }
 
 
++ (NSString *) filterString : (NSArray *) filter isCat: (BOOL) Category {
+    
+    NSString * ret = [NSString stringWithUTF8String:" "];
+    
+    // find out which type it is
+    if (filter != nil) {
+        if (Category) {
+            
+            ret = [ret stringByAppendingFormat:@" %s in ( ", VERSES_BOOK_ROWID];
+            for (NSNumber * obj in filter) {
+                bibleCategory cat = [obj intValue];
+                int i;
+                for (i = [BibleCategory getHashLow:cat] + 1 ; i < [BibleCategory getHashHigh:cat]; i++) {
+                    ret = [ret stringByAppendingFormat:@"'%@',", [BibleDataBaseController getBookNameAt:i-1]];
+                    
+                }
+                ret = [ret stringByAppendingFormat:@"'%@') AND ", [BibleDataBaseController getBookNameAt:i-1]];
+            }
+            
+            
+            
+        } else {
+            // specific books selected
+            for (NSString * obj in filter) {
+                ret = [ret stringByAppendingFormat:@"%s = '%@' AND ", VERSES_BOOK_ROWID, obj];
+            }
+        }
+        
+    }
+    
+    NSLog(@"filter : %@", ret);
+    return ret;
+}
 //query += LiteralWord.VERSES_TEXT_ROWID + " LIKE '%" + text + "%' AND " + LiteralWord.VERSES_HEADER_TAG + "=" + LiteralWord.HEADER_NONE;
 + (NSString *) formatQuerySearchString:(const char *) string {
 
 	return [NSString stringWithFormat:@"%s LIKE '%%%s%%' AND %s = 0", VERSES_TEXT_ROWID, string, VERSES_HEADER_TAG];
 }
 
-+ (NSArray *) searchString:(const char *) string {
++ (NSArray *) searchString:(const char *) string withFilter:(NSArray *)filter isCat:(BOOL)cat{
 
 	sqlite3_stmt    *statement;
 	NSMutableArray *result = nil;
 	NSString *querySQL = [NSString stringWithFormat: 
-			@"SELECT %@,%@,%@,%@ FROM %@ WHERE %@",
+			@"SELECT %@,%@,%@,%@ FROM %@ WHERE %@%@",
 			@VERSES_BOOK_ROWID, @VERSES_CHAPTERS_ROWID, @VERSES_NUM_ROWID, @VERSES_TEXT_ROWID, 
 			@VERSES_TABLE, 
+            [self filterString:filter isCat:cat],
 			[self formatQuerySearchString:string]
 			];
 
@@ -224,6 +259,10 @@ static sqlite3 *bibleDB;
 
 	return result;
 
+}
+
++ (NSArray *) searchString:(const char *)string {
+    return [self searchString:string withFilter:nil isCat:NO];
 }
 
 + (NSString *) searchStringToHtml:(const char *) string {
