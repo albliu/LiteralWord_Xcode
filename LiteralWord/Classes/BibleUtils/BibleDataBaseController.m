@@ -189,30 +189,41 @@ static sqlite3 *bibleDB;
 + (NSString *) filterString : (NSArray *) filter isCat: (BOOL) Category {
     
     NSString * ret = [NSString stringWithUTF8String:" "];
-    
+    NSMutableArray * books = [[NSMutableArray alloc] initWithCapacity:1];
+
     // find out which type it is
     if (filter != nil) {
         if (Category) {
             
-            ret = [ret stringByAppendingFormat:@" %s in ( ", VERSES_BOOK_ROWID];
+                        
             for (NSNumber * obj in filter) {
-                bibleCategory cat = [obj intValue];
+                // have to add 1 to category since the array index starts at 0
+                bibleCategory cat = [obj intValue] + 1;
                 int i;
-                for (i = [BibleCategory getHashLow:cat] + 1 ; i < [BibleCategory getHashHigh:cat]; i++) {
-                    ret = [ret stringByAppendingFormat:@"'%@',", [BibleDataBaseController getBookNameAt:i-1]];
+    
+                for (i = [BibleCategory getHashLow:cat] ; i < [BibleCategory getHashHigh:cat]; i++) {
+                    
+                    [books addObject:[NSNumber numberWithInt:i]];
                     
                 }
-                ret = [ret stringByAppendingFormat:@"'%@') AND ", [BibleDataBaseController getBookNameAt:i-1]];
+                
             }
             
-            
-            
-        } else {
-            // specific books selected
-            for (NSString * obj in filter) {
-                ret = [ret stringByAppendingFormat:@"%s = '%@' AND ", VERSES_BOOK_ROWID, obj];
-            }
+         } else {
+             books = [filter mutableCopy];
         }
+        
+        // specific books selected
+        ret = [ret stringByAppendingFormat:@" %s in ( ", VERSES_BOOK_ROWID];
+        
+        int j = 0;
+        for (; j < ([books count] - 1); j++) {
+            
+            NSNumber * bk = [books objectAtIndex:j];
+            ret = [ret stringByAppendingFormat:@"'%@',", [BibleDataBaseController getBookNameAt: [bk intValue]]];
+        }
+        NSNumber * bk = [books objectAtIndex:j];
+        ret = [ret stringByAppendingFormat:@"'%@') AND ", [BibleDataBaseController getBookNameAt:[bk intValue]]];    
         
     }
     
@@ -237,6 +248,7 @@ static sqlite3 *bibleDB;
 			[self formatQuerySearchString:string]
 			];
 
+    NSLog(@"%@", querySQL);
 		const char *query_stmt = [querySQL UTF8String];
 		if(sqlite3_prepare_v2(bibleDB, query_stmt, -1, &statement, NULL) == SQLITE_OK) {
 			result = [[NSMutableArray alloc] initWithCapacity:1];

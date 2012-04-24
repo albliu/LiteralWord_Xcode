@@ -16,9 +16,10 @@
 {
     self = [super initWithStyle:UITableViewStyleGrouped];
     if (self) {
-        self.filterResults = [[NSMutableArray alloc] initWithCapacity:1];
+        self.filterResults = [[NSMutableArray alloc] initWithCapacity:CATEGORY_FILTER_SIZE];
         myData = [[NSMutableArray alloc] initWithCapacity:CATEGORY_FILTER_SIZE];
         for (int i = 1; i < CATEGORY_FILTER_SIZE; i ++) {
+            [self.filterResults addObject:[NSNumber numberWithBool:NO]];
             [myData addObject:[BibleCategory getName:i]];
         }
     }
@@ -101,20 +102,14 @@
     
     UITableViewCell *thisCell = [tableView cellForRowAtIndexPath:indexPath];
     
-    
     if (thisCell.accessoryType == UITableViewCellAccessoryNone) {
         thisCell.accessoryType = UITableViewCellAccessoryCheckmark;
+        [self.filterResults replaceObjectAtIndex:indexPath.row withObject:[NSNumber numberWithBool:YES]];
         
     }else{
         thisCell.accessoryType = UITableViewCellAccessoryNone;
-        
+        [self.filterResults replaceObjectAtIndex:indexPath.row withObject:[NSNumber numberWithBool:NO]];
     }
-}
-
-- (UITableViewCellAccessoryType)tableView:(UITableView *)tableView accessoryTypeForRowWithIndexPath:(NSIndexPath *)indexPath {
-    
-    //add your own code to set the cell accesory type.
-    return UITableViewCellAccessoryNone;
 }
 
 

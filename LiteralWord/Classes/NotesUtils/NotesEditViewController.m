@@ -164,12 +164,12 @@ enum {
     
     
     UIBarButtonItem *save = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"Save.png"] style:UIBarButtonItemStylePlain target:self action:@selector(save:)];
-    save.width = 30.f;
+    save.width = 25.f;
     
     UIBarButtonItem * fonts = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"Fonts.png"] style:UIBarButtonItemStylePlain target:self action:@selector(editToolBar:)];
-    fonts.width = 30.f;
+    fonts.width = 25.f;
     
-    UIToolbar *tools = [[UIToolbar alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 80.0f, 44.01f)];
+    UIToolbar *tools = [[UIToolbar alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 70.0f, 44.01f)];
 	tools.barStyle = -1;
 	tools.autoresizingMask = (UIViewAutoresizingFlexibleHeight);
     [tools setItems:[NSArray arrayWithObjects:fonts, save, nil]];

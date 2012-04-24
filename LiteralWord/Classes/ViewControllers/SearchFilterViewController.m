@@ -9,16 +9,10 @@
 
 
 @implementation SearchFilterViewController
+
 @synthesize filterCategory;
 @synthesize myBookView = _myBookView;
 @synthesize myCategoryView = _myCategoryView;
-
-- (SearchFilterBook *) myBookView {
-    if (_myBookView == nil) {
-        _myBookView = [[SearchFilterBook alloc] init];
-    }
-    return _myBookView;
-}
 
 - (SearchFilterCategory *) myCategoryView {
     if (_myCategoryView == nil) {
@@ -39,6 +33,7 @@
     
     if (filterCategory) {
         filterCategory = NO;
+        self.myBookView = [[SearchFilterBook alloc] initWithCategory:self.myCategoryView.filterResults];
         self.view = self.myBookView.view;
         [self.navigationItem.rightBarButtonItem setTitle:@"Categories"];
         self.navigationItem.title = @"Books";
@@ -48,6 +43,8 @@
         self.view = self.myCategoryView.view;
         [self.navigationItem.rightBarButtonItem setTitle:@"Books"];
         self.navigationItem.title = @"Categories";
+        [self.myBookView release];
+        self.myBookView = nil;
     }
     
 }
@@ -55,7 +52,11 @@
     [super loadView];
     
     if (filterCategory) self.view = self.myCategoryView.view;
-    else self.view = self.myBookView.view;
+    else {
+        self.myBookView = [[SearchFilterBook alloc] initWithCategory:self.myCategoryView.filterResults];
+        self.view = self.myBookView.view;
+        
+    }
     
     self.navigationItem.title = @"Categories";
     

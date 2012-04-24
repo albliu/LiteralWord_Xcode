@@ -11,8 +11,15 @@
 
 @interface SearchFilterBook : UITableViewController {
     NSMutableArray * _filterResults;
-    NSArray * myData;
+    NSMutableArray * _filterBooks;
+
+    int nCategory;
+    NSMutableArray * categoryArray;
 }
 
-@property (nonatomic, retain) NSArray * filterResults;
+// these 2 should match up in size 
+@property (nonatomic, retain) NSMutableArray * filterResults;
+@property (nonatomic, retain) NSMutableArray * filterBooks;
+
+- (id) initWithCategory:(NSArray *) categories;
 @end
