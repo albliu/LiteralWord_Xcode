@@ -172,5 +172,32 @@
     }
 }
 
+- (NSArray *) filterArray {
+    NSMutableArray * myFilter = [[NSMutableArray alloc] initWithCapacity:1];
+    for (int i = 0; i < [self.filterResults count]; i++) {
+        
+        NSNumber * obj = [self.filterResults objectAtIndex:i];
+        
+        if ([obj boolValue]) {
+            
+                [myFilter addObject:[self.filterBooks objectAtIndex:i]];
+            
+        }
+    }
+    
+    if ([myFilter count] == 0) {
+        if (categoryArray == nil) {
+            [myFilter release];
+            return nil;
+        } else {
+            for (NSNumber * obj in self.filterBooks) [myFilter addObject:obj];
+        }
+        
+    }
+
+    NSArray * ret = [NSArray arrayWithArray:myFilter];
+    [myFilter release];
+    return ret;
+}
 
 @end

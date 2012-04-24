@@ -13,7 +13,6 @@
     NSMutableArray * _filterResults;
     NSMutableArray * _filterBooks;
 
-    int nCategory;
     NSMutableArray * categoryArray;
 }
 
@@ -22,4 +21,5 @@
 @property (nonatomic, retain) NSMutableArray * filterBooks;
 
 - (id) initWithCategory:(NSArray *) categories;
+- (NSArray *) filterArray;
 @end

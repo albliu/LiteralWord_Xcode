@@ -153,6 +153,23 @@ enum {
 
 }
 
+- (void) editToolBar: (id) ignore {
+    UIToolbar * myToolBar = (UIToolbar *) [self.view viewWithTag:TOOLBAR_TAG];
+    
+    if (myToolBar.hidden) {
+        
+        myToolBar.hidden = NO;
+        self.editView.frame = CGRectMake(0, NOTES_TOOLBAR_HEIGHT, self.view.frame.size.width, self.view.frame.size.height - NOTES_TOOLBAR_HEIGHT);
+    } else {
+        
+        myToolBar.hidden = YES;
+        self.editView.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height);        
+    }
+    
+    
+    
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -185,27 +202,17 @@ enum {
     [self editToolBar:nil];
    
 }
-
-- (void) editToolBar: (id) ignore {
-    UIToolbar * myToolBar = (UIToolbar *) [self.view viewWithTag:TOOLBAR_TAG];
-    
-    if (myToolBar.hidden) {
-        
-        myToolBar.hidden = NO;
-        self.editView.frame = CGRectMake(0, NOTES_TOOLBAR_HEIGHT, self.view.frame.size.width, self.view.frame.size.height - NOTES_TOOLBAR_HEIGHT);
-    } else {
-        
-        myToolBar.hidden = YES;
-        self.editView.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height);        
-    }
-    
-    
-    
-}
 - (void) changeTitle:(UIButton *) button {
     UIAlertView *prompt = [[[UIAlertView alloc]initWithTitle:@"Title" message:nil delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Done", nil] autorelease];
     [prompt setAlertViewStyle:UIAlertViewStylePlainTextInput];
-
+    
+    UIButton * currTitle = (UIButton *) self.navigationItem.titleView;
+    
+    if (![currTitle.titleLabel.text isEqualToString:@INIT_TITLE_STRING]) {
+    
+        UITextField * title = [prompt textFieldAtIndex:0];
+        title.text = currTitle.titleLabel.text;
+    }
     [prompt show];
 
 }
@@ -224,7 +231,8 @@ enum {
 - (void) newNote {
 
     UIButton * title = (UIButton *) self.navigationItem.titleView;
-    [title setTitle:@"Click to Change title" forState:UIControlStateNormal];
+    [title setTitle:@INIT_TITLE_STRING forState:UIControlStateNormal];
+    [title sizeToFit];
     currNote_id = NEW_NOTE;
     
     NSString *jsString = [[NSString alloc] initWithFormat:@"editor.setHTML('<div><br></div>')"];
@@ -239,13 +247,14 @@ enum {
  
    // [[[[UIAlertView alloc] initWithTitle: note.title message:note.body delegate:nil cancelButtonTitle:@"Done" otherButtonTitles:nil] autorelease] show];
 
-       	currNote_id = note.rowid; 
-        UIButton * title = (UIButton *) self.navigationItem.titleView;
-        [title setTitle:note.title forState:UIControlStateNormal];
+    currNote_id = note.rowid; 
+    UIButton * title = (UIButton *) self.navigationItem.titleView;
+    [title setTitle:note.title forState:UIControlStateNormal];
+    [title sizeToFit];
         
-        NSString *jsString = [[NSString alloc] initWithFormat:@"editor.setHTML(\"%@\")", note.body];
-        [self.editView stringByEvaluatingJavaScriptFromString:jsString];  
-        [jsString release];
+    NSString *jsString = [[NSString alloc] initWithFormat:@"editor.setHTML(\"%@\")", note.body];
+    [self.editView stringByEvaluatingJavaScriptFromString:jsString];  
+    [jsString release];
 
 
 

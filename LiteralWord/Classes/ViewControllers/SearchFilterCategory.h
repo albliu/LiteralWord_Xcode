@@ -15,4 +15,6 @@
 }
 
 @property (nonatomic, retain) NSMutableArray * filterResults;
+
+- (NSArray *) filterArray;
 @end

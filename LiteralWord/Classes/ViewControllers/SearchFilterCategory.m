@@ -112,6 +112,26 @@
     }
 }
 
+- (NSArray *) filterArray {
+    NSMutableArray * myFilter = [[NSMutableArray alloc] initWithCapacity:1];
+    for (int i = 0; i < [self.filterResults count]; i++) {
+        
+        NSNumber * obj = [self.filterResults objectAtIndex:i];
+        
+        if ([obj boolValue]) {
 
+                [myFilter addObject:[NSNumber numberWithInt:i]];
+        }
+    }
+    
+    if ([myFilter count] == 0) {
+        [myFilter release];
+        return nil;
+    }
+    
+    NSArray * ret = [NSArray arrayWithArray:myFilter];
+    [myFilter release];
+    return ret;
+}
 
 @end

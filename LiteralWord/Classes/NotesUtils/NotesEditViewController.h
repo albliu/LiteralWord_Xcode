@@ -13,6 +13,9 @@
 #define TITLE_MAX_CHAR 25
 #define NEW_NOTE -1
 #define TOOLBAR_TAG 1000
+
+#define INIT_TITLE_STRING "click to change title"
+
 @protocol NotesEditDelegate
 - (int) saveNote: (NSString *) title Body:(NSString *) body ID:(int) i;
 @end

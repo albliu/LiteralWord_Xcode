@@ -170,31 +170,12 @@ int currRotation;
 {
 
     NSArray * filter;
-    if (searchFilter.filterCategory) filter = searchFilter.myCategoryView.filterResults;
-    else filter = searchFilter.myBookView.filterResults;
+    if (searchFilter.filterCategory) filter = [searchFilter.myCategoryView filterArray];    
+    else filter = [searchFilter.myBookView filterArray];
     
-    NSMutableArray * myFilter = [[NSMutableArray alloc] initWithCapacity:1];
-    for (int i = 0; i < [filter count]; i++) {
-        
-        NSNumber * obj = [filter objectAtIndex:i];
-                
-        if ([obj boolValue]) {
-            if (searchFilter.filterCategory) {
-                [myFilter addObject:[NSNumber numberWithInt:i]];
-            } else {
-                [myFilter addObject:[searchFilter.myBookView.filterBooks objectAtIndex:i]];
-            }
-        }
-    }
-    
-    if ([myFilter count] == 0) {
-        [myFilter release];
-        myFilter = nil;
-    }
-    
-    searchResults = [BibleDataBaseController searchString:[searchBar.text UTF8String] withFilter:myFilter isCat:searchFilter.filterCategory];
+       
+    searchResults = [BibleDataBaseController searchString:[searchBar.text UTF8String] withFilter:filter isCat:searchFilter.filterCategory];
 
-	[myFilter release];
     [searchBar resignFirstResponder];
   
     [self.tableView reloadData];
