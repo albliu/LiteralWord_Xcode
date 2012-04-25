@@ -52,8 +52,8 @@ enum {
 	[toolbar setItems:items];	
 	[items release];
 
-	
-	return toolbar;
+	toolbar.tag = TOOLBAR_TAG;
+	return [toolbar autorelease];
 
 }
 
@@ -134,12 +134,9 @@ enum {
 
 
     [self.view addSubview:self.editView];
-
-    UIToolbar * toolbar = [self setupEditToolBar];
-    toolbar.tag = TOOLBAR_TAG;
-    [self.view addSubview:toolbar]; 
-    [toolbar release];
     
+    [self.view addSubview:[self setupEditToolBar]]; 
+        
    
     UIButton * title = [UIButton buttonWithType:UIButtonTypeCustom]; 
     [title setTitle:@"Click to Change title" forState:UIControlStateNormal];

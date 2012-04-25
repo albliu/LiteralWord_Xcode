@@ -87,7 +87,7 @@
 
 
 - (void)dealloc {
-    [self.myData release];
+    [_myData release];
     [super dealloc];
 }
 

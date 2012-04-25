@@ -77,7 +77,7 @@ static sqlite3 *bibleDB;
 
 
 
-	books = [self.class listBibleContents];
+	books = [[NSArray alloc] initWithArray:[self.class listBibleContents]];
 	maxBooks = [books count];
 }
 
@@ -109,8 +109,9 @@ static sqlite3 *bibleDB;
 			sqlite3_finalize(statement);
 		}
 
-
-	return result;
+    NSArray * ret = [NSArray arrayWithArray:result];
+    [result release];
+	return ret;
 
 }
 
@@ -210,7 +211,8 @@ static sqlite3 *bibleDB;
             }
             
          } else {
-             books = [filter mutableCopy];
+             [books release];
+             books = [[NSMutableArray alloc] initWithArray:filter];
         }
         
         // specific books selected
@@ -227,7 +229,7 @@ static sqlite3 *bibleDB;
         
     }
     
-    NSLog(@"filter : %@", ret);
+    [books release];
     return ret;
 }
 //query += LiteralWord.VERSES_TEXT_ROWID + " LIKE '%" + text + "%' AND " + LiteralWord.VERSES_HEADER_TAG + "=" + LiteralWord.HEADER_NONE;
@@ -267,9 +269,8 @@ static sqlite3 *bibleDB;
 			}
 			sqlite3_finalize(statement);
 		}
-
-
-	return result;
+    
+	return [result autorelease];
 
 }
 

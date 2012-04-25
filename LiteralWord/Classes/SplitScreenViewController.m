@@ -1,6 +1,6 @@
 #import "SplitScreenViewController.h"
 #import "BibleUtils/BibleUtils.h"
-#import <QuartzCore/QuartzCore.h>
+
 
 @implementation SplitScreenViewController
 
@@ -25,14 +25,6 @@
 		_bibleView.myDelegate = self;
 	}
 	return _bibleView;
-}
-
--(BibleViewController *) secbibleView{
-	if (!_secbibleView) {
-		_secbibleView = [[BibleViewController alloc] initWithFrame:CGRectMake(self.view.bounds.size.width/2 + BORDER_OFFSET, 0, self.view.bounds.size.width/2 - 2 * BORDER_OFFSET, self.view.bounds.size.height)];
-		_secbibleView.myDelegate = self;
-	}
-	return _secbibleView;
 }
 
 
@@ -119,7 +111,7 @@
 #pragma mark BibleView Delegates
 
 - (VerseEntry *) initPassage {
-	return [history lastPassage];
+	return [[history lastPassage] copy];
 
 }
 - (void) addToHist:(int) book Chapter:(int) chapter {
@@ -164,16 +156,16 @@
             myView = self.searchView;
             break;
         case MEMORYVERSE_VIEW:
-            myView = [[VersesViewController alloc] initWithDelegate:self.bibleView Data:memory] ;
+            myView = [[[VersesViewController alloc] initWithDelegate:self.bibleView Data:memory] autorelease];
             myView.title = @"Memory Verses"; 
             break;
         case BOOKMARK_VIEW:
-            myView = [[BookmarkViewController alloc] initWithDelegate: self.bibleView Data:bookmarks] ;
+            myView = [[[BookmarkViewController alloc] initWithDelegate: self.bibleView Data:bookmarks] autorelease];
             myView.title = @"Bookmarks";
             if (dualView) myView.delegate = self.secbibleView;
             break;
         case HISTORY_VIEW:
-            myView = [[HistoryViewController alloc] initWithDelegate: self.bibleView Data:history] ;
+            myView = [[[HistoryViewController alloc] initWithDelegate: self.bibleView Data:history] autorelease];
             myView.title = @"History"; 
             if (dualView) myView.delegate = self.secbibleView;
             break;
@@ -185,11 +177,6 @@
     popover_currview = but.tag;
     myView.rootview = self;
     UINavigationController * navView= [[UINavigationController alloc] initWithRootViewController:myView];
-
-    
-    if (but.tag != SEARCH_VIEW) {
-        [myView release];
-    }
         
     popover = [[UIPopoverController alloc] initWithContentViewController:navView];
     [navView release];
@@ -210,10 +197,10 @@
 - (void) notes:(id)ignored {
 
     [self clearPopovers];
-	NotesViewController * myView = [[NotesViewController alloc] initWithNotes:notes] ;
+	NotesViewController * myView = [[[NotesViewController alloc] initWithNotes:notes] autorelease];
 	myView.title = @"Notes"; 
 	[self.navigationController pushViewController:myView animated:YES];
-	[myView release];
+	
 
 }
 
@@ -265,7 +252,7 @@
     [mySelector addSubview:tools];
     [tools release];
 
-    return mySelector;
+    return [mySelector autorelease];
 }
 
 - (void) fullscreen:(id)ignored {
@@ -273,13 +260,11 @@
 
 	if (dualView == YES) {
 		self.bibleView.view.frame = CGRectMake(BORDER_OFFSET, 0, self.view.bounds.size.width - 2 * BORDER_OFFSET, self.view.bounds.size.height);
-
+        self.secbibleView.view.hidden = YES;
+        
         self.navigationItem.titleView = self.bibleView.passageTitle;
         [self.bibleView.passageTitle.titleLabel setTextAlignment:UITextAlignmentCenter];
-		[self.secbibleView.view removeFromSuperview];
-		[self.secbibleView release];
-		_secbibleView = nil;
-        
+		
         dualView = NO;
         
         self.searchView.delegate = self.bibleView;
@@ -288,14 +273,18 @@
 	} else {
 		self.bibleView.view.frame = CGRectMake(BORDER_OFFSET, 0, self.view.bounds.size.width/2 - 2 * BORDER_OFFSET, self.view.bounds.size.height);
         
-        UIView  * selector = [self splitscreenSelector];
-        self.navigationItem.titleView = selector;
-        [selector release];
+        if (_secbibleView == nil) {
+            _secbibleView = [[BibleViewController alloc] initWithFrame:CGRectMake(self.view.bounds.size.width/2 + BORDER_OFFSET, 0, self.view.bounds.size.width/2 - 2 * BORDER_OFFSET, self.view.bounds.size.height)];
+            _secbibleView.myDelegate = self;
+            [self.view addSubview:_secbibleView.view];
+            
+        } else {
+            self.secbibleView.view.hidden = NO;
+            
+        }
         
-		[self.view addSubview:self.secbibleView.view];
-		self.secbibleView.view.autoresizingMask = (UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
-		[self.secbibleView.view.layer setCornerRadius:8.0f];
-		[self.secbibleView.view.layer setMasksToBounds:YES];
+        self.navigationItem.titleView = [self splitscreenSelector];
+        
         dualView = YES;
 
         self.searchView.delegate = self.secbibleView;
@@ -338,9 +327,7 @@
 	self.view.backgroundColor = [UIColor SHEET_BLUE];
 
 	[self.view addSubview:self.bibleView.view];
-	self.bibleView.view.autoresizingMask = (UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
-	[self.bibleView.view.layer setCornerRadius:8.0f];
-	[self.bibleView.view.layer setMasksToBounds:YES];
+
     dualView = NO;
 
 }
@@ -355,9 +342,9 @@
 	[bookmarks release];
 	[memory release];
 	[notes release];
-	[self.bibleView release];	
-	[self.secbibleView release];	
-	[self.searchView release];	
+	[_bibleView release];	
+	[_secbibleView release];	
+	[_searchView release];	
 	[super dealloc];
 }
 

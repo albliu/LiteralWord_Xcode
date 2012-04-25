@@ -119,8 +119,8 @@
 	[bookmarks release];
 	[memory release];
 	[notes release];
-	[self.bibleView release];	
-	[self.searchView release];	
+	[_bibleView release];	
+	[_searchView release];	
 	[super dealloc];
 }
 
@@ -161,7 +161,7 @@
 #pragma mark BibleView Delegates
 
 - (VerseEntry *) initPassage {
-	return [history lastPassage];
+	return [[history lastPassage] copy];
 
 }
 - (void) addToHist:(int) book Chapter:(int) chapter {

@@ -24,6 +24,10 @@
 	return self;
 }
 
+-(id) copy {
+    
+    return [[self.class alloc] initWithBook:self.book_index Chapter:self.chapter Verses:self.verses Text:self.text ID:self.rowid];
+}
 
 + (NSString *) VerseArrayToString: (NSArray *) arr {
 	if (!arr) return nil;

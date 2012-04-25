@@ -27,7 +27,7 @@
     self.myDB = [[VersesDataBaseController alloc] initDataBase:DATABASE_HISTORY_TABLE];
 
     self.myVerses = [[NSMutableArray alloc] initWithCapacity: HISTORY_MAX];
-    NSArray * tmp =  [self.myDB findAllVerses];
+    NSArray * tmp =  [[NSArray alloc] initWithArray:[self.myDB findAllVerses]];
 
     // we need to reverse the inital array since most recently added should be on top		    
     int i = [tmp count] - 1;
@@ -49,8 +49,8 @@
 }
 
 - (VerseEntry *) lastPassage {
-	if ([self.myVerses count] == 0) return nil;
-	return [self.myVerses objectAtIndex:0];
+	if ([self.myVerses count] == 0) return nil; 
+	return [[[self.myVerses objectAtIndex:0] copy] autorelease];
 }
 
 @end

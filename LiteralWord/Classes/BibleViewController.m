@@ -1,4 +1,13 @@
 #import "BibleViewController.h"
+#import <QuartzCore/QuartzCore.h>
+
+@interface BibleViewController() { 
+    PassageSelector * passageSel;
+    VerseSelector * verseSel;
+    
+}
+
+@end
 
 @implementation BibleViewController
 
@@ -11,7 +20,7 @@
 -(UIButton *) passageTitle {
 
 	if (_passageTitle == nil) {
-		_passageTitle = [UIButton buttonWithType:UIButtonTypeCustom ];
+		_passageTitle = [[UIButton alloc] initWithFrame:CGRectZero]; //buttonWithType:UIButtonTypeCustom ];
 		[_passageTitle setTitle:@"LiteralWord" forState:UIControlStateNormal];
 		[_passageTitle addTarget:self action:@selector(passagemenu:) forControlEvents:UIControlEventTouchUpInside];
 		[_passageTitle sizeToFit];
@@ -213,17 +222,22 @@
 	NSLog(@"switch passage");
 
 	[[self myDelegate] lockScreen];
-	PassageSelector * selectMenu = [[PassageSelector alloc] initWithFrame: self.view.bounds RootView:self Book:curr_book Chapter:curr_chapter ]; 
+    if (passageSel != nil) [passageSel release];
+    
+	passageSel = [[PassageSelector alloc] initWithFrame: self.view.bounds RootView:self Book:curr_book Chapter:curr_chapter ] ; 
 
-    [self.view addSubview:selectMenu.view];
+    [self.view addSubview:passageSel.view];
 
 }
 
 - (void) verseselector:(id) ignored {
 	
 	[[self myDelegate] lockScreen];
-	VerseSelector * verseMenu = [[VerseSelector alloc] initWithFrame: self.view.bounds RootView:self Numbers:[BibleDataBaseController getVerseCount:[[BibleDataBaseController getBookNameAt:curr_book] UTF8String] chapter:curr_chapter]]; 
-	[self.view addSubview:verseMenu.view];
+    
+    if (verseSel != nil) [verseSel release];
+    
+	verseSel = [[VerseSelector alloc] initWithFrame: self.view.bounds RootView:self Numbers:[BibleDataBaseController getVerseCount:[[BibleDataBaseController getBookNameAt:curr_book] UTF8String] chapter:curr_chapter]]; 
+	[self.view addSubview:verseSel.view];
 
 }
 
@@ -243,10 +257,10 @@
 
 - (void) action:(id)ignored {
 
-	[[[UIAlertView alloc] initWithTitle:nil message:nil delegate:self 
+	[[[[UIAlertView alloc] initWithTitle:nil message:nil delegate:self 
 		cancelButtonTitle:@"Cancel" 
 		otherButtonTitles:@ACTION_MEMORY, 
-				@ACTION_CLEAR, nil] show];
+				@ACTION_CLEAR, nil] autorelease] show];
 }
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
@@ -326,6 +340,11 @@
 	[self.view addSubview:rightpassage];
 	[rightpassage release];        
 
+    
+    self.view.autoresizingMask = (UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
+    [self.view.layer setCornerRadius:8.0f];
+    [self.view.layer setMasksToBounds:YES];
+
 
 
 }
@@ -340,15 +359,20 @@
 	gestures = [[MyGestureRecognizer alloc] initWithDelegate:self View:self.webView];
 
 	// load last passage
-	VerseEntry * last = [[self myDelegate] initPassage];
+	VerseEntry * last = [myDelegate initPassage];
 	if (last) [self selectedbook:last.book_index chapter:last.chapter];
 	else [self loadPassage];
+    [last release];
 }
 
 
 - (void)dealloc {
-	[self.webView release]; 
+    if (passageSel != nil) [passageSel release];
+    if (verseSel != nil) [verseSel release];
+    
+	[_webView release]; 
 	[gestures release];
+    [_passageTitle release];
 	[super dealloc];
 }
 

@@ -106,8 +106,8 @@
 }
 
 - (void)dealloc {
-    [self.myData release];
-    [self.myedit release];
+    [_myData release];
+    [_myedit release];
     [super dealloc];
 }
 

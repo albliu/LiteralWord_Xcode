@@ -7,7 +7,7 @@ static sqlite3 *database = nil;
 
 + (NSString *) CreateTableString:(const char *) table {
 
-	return [[NSString alloc] initWithFormat:@"CREATE TABLE IF NOT EXISTS %s (%s  integer primary key autoincrement, %s text, %s integer, %s integer, %s text not null, %s text not null);",
+	return [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS %s (%s  integer primary key autoincrement, %s text, %s integer, %s integer, %s text not null, %s text not null);",
 		table,
 		KEY_ROWID, 
 		VERSES_TITLE, 
@@ -48,9 +48,6 @@ static sqlite3 *database = nil;
 			} else {
 				NSLog(@"error creating Memory Verse table %s\n", error);
 			}
-			[createHist release];
-			[createMem release];
-			[createBMark release];
 		}
 	} else {
 		sqlite3_close(database);
@@ -125,7 +122,9 @@ static sqlite3 *database = nil;
 			}
 			sqlite3_finalize(statement);
 		}
-	return result;
+    NSArray * ret = [NSArray arrayWithArray:result];
+    [result release];
+	return ret;
 }
 - (VerseEntry *) findVerse:(int) row_id {
 
@@ -144,16 +143,17 @@ static sqlite3 *database = nil;
 
 			while(sqlite3_step(statement) == SQLITE_ROW) {
 				
-				result = [[VerseEntry alloc] 
+				result = [[[VerseEntry alloc] 
 					initWithBook: sqlite3_column_int(statement, 0) 
 					Chapter: sqlite3_column_int(statement, 1) 
 					Verses: [NSString stringWithFormat:@"%s", sqlite3_column_text(statement,2)] 
 					Text: [NSString stringWithFormat:@"%s", sqlite3_column_text(statement,3)] 
-					ID:sqlite3_column_int(statement, 4) ];	
+					ID:sqlite3_column_int(statement, 4) ] autorelease];	
 
 			}
 			sqlite3_finalize(statement);
 		}
+   
 	return result;
 }
 
@@ -192,7 +192,7 @@ static sqlite3 *database = nil;
 			} else {
 				NSLog(@"error creating table\n");
 			}
-			[createTable release];
+			
 		} else {
 			NSLog(@"error deleting table\n");
 		}

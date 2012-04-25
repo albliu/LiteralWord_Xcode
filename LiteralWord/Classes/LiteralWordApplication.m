@@ -59,8 +59,8 @@
 
 
 - (void)dealloc {
-	[self.rootview release];	
-	[self.window release];
+	[_rootview release];	
+	[_window release];
 	[super dealloc];
 }
 @end

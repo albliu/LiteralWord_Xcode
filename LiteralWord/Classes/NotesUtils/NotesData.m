@@ -7,10 +7,10 @@
 @synthesize myDB = _myDB;
 
 - (id) init {
-    self.myDB = [[NotesDbController alloc] init];
-    self.myNotes = [[NSMutableArray alloc] initWithCapacity:10];
+    _myDB = [[NotesDbController alloc] init];
+    _myNotes = [[NSMutableArray alloc] initWithCapacity:10];
 
-    NSArray * tmp = [self.myDB findAllNotes];
+    NSArray * tmp = [_myDB findAllNotes];
     for (NoteEntry * obj in tmp) {
         [self.myNotes addObject:obj];
     }	
@@ -30,7 +30,7 @@
 }
 
 
-- (int) findNote:(int) rowid {
+- (int) findMyNote:(int) rowid {
    
     int i = 0; 
     for (NoteEntry * obj in self.myNotes) {
@@ -45,7 +45,7 @@
 - (int) addToList:(NoteEntry *) note {
 	if (note.rowid != NEW_NOTE) {
 	    [self.myDB updateNote:note];
-            [self.myNotes replaceObjectAtIndex:[self findNote:note.rowid] withObject:note];
+            [self.myNotes replaceObjectAtIndex:[self findMyNote:note.rowid] withObject:note];
 	} else {
             note.rowid = [self.myDB addNote:[note.title UTF8String] Body:[note.body UTF8String]];
             [self.myNotes addObject:note];
@@ -65,8 +65,8 @@
 }
 
 - (void) dealloc {
-	[self.myDB release];	
-	[self.myNotes release];
+	[_myDB release];	
+	[_myNotes release];
 	[super dealloc];
 }
 

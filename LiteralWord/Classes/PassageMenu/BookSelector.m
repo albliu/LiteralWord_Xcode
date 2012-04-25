@@ -7,7 +7,7 @@
 
 -(BookSelector *) initWithFrame:(CGRect) f RootView:(id) del Book:(int)bk{ 
     initBook = bk;
-    bookData = [BibleDataBaseController listBibleContents];
+    bookData = [[NSArray alloc] initWithArray:[BibleDataBaseController listBibleContents]];
 	return [super initWithFrame: f RootView:del];
 }
 
@@ -82,7 +82,7 @@
 }
 
 - (void) dealloc {
-    [bookData dealloc];
+    [bookData release];
     [super dealloc];
 }
 

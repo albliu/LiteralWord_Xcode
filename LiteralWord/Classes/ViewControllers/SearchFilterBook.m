@@ -11,15 +11,15 @@
 
 @implementation SearchFilterBook
 
-@synthesize filterBooks = _filterBooks;
-@synthesize filterResults = _filterResults;
+@synthesize filterBooks;
+@synthesize filterResults;
 
-- (id) initWithCategory:(NSArray *) categories {
+- (id) initWithCategory:(NSArray * ) categories {
     self = [super initWithStyle:UITableViewStyleGrouped];
     if (self) {
         
-        self.filterResults = [[NSMutableArray alloc] initWithCapacity:1];
-        self.filterBooks = [[NSMutableArray alloc] initWithCapacity:1];
+        filterResults = [[NSMutableArray alloc] initWithCapacity:1];
+        filterBooks = [[NSMutableArray alloc] initWithCapacity:1];
         for (int i = 0; i < [categories count]; i++) {
             NSNumber * obj = [categories objectAtIndex:i];
             if ([obj boolValue] == NO) continue;
@@ -52,6 +52,12 @@
     return self;
 }
 
+- (void) dealloc {
+    [filterBooks release];
+    [filterResults release];
+    [categoryArray release];
+    [super dealloc];
+}
 - (void) loadView {
     [super loadView];
     

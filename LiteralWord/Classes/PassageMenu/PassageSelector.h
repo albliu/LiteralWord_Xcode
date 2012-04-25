@@ -1,5 +1,6 @@
 #import "SelectorViewController.h"
 
+
 enum {
     BOOK_SELECTOR_VIEW = 600,
     CHAPTER_SELECTOR_VIEW,
@@ -10,6 +11,7 @@ enum {
 	int select_chapter;
     
     BOOL selected;
+    
 }
 
 -(id) initWithFrame:(CGRect) f RootView:(id) v Book:(int) book Chapter:(int) chapter; 

@@ -10,8 +10,8 @@
 #import <UIKit/UIKit.h>
 
 @interface SearchFilterBook : UITableViewController {
-    NSMutableArray * _filterResults;
-    NSMutableArray * _filterBooks;
+    NSMutableArray * filterResults;
+    NSMutableArray * filterBooks;
 
     NSMutableArray * categoryArray;
 }

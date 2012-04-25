@@ -19,9 +19,9 @@
 
 - (id) init {
 
-    self.myDB = [[VersesDataBaseController alloc] initDataBase:DATABASE_BOOKMARK_TABLE];
-    NSArray * tmp =  [self.myDB findAllVerses];
-    self.myVerses = [tmp mutableCopy];
+    _myDB = [[VersesDataBaseController alloc] initDataBase:DATABASE_BOOKMARK_TABLE];
+    NSArray * tmp =  [[NSArray alloc] initWithArray:[self.myDB findAllVerses]];
+    _myVerses = [tmp mutableCopy];
     [tmp release];
 		
     return self;

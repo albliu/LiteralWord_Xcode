@@ -174,7 +174,7 @@ int currRotation;
     else filter = [searchFilter.myBookView filterArray];
     
        
-    searchResults = [BibleDataBaseController searchString:[searchBar.text UTF8String] withFilter:filter isCat:searchFilter.filterCategory];
+    searchResults = [[NSArray alloc] initWithArray:[BibleDataBaseController searchString:[searchBar.text UTF8String] withFilter:filter isCat:searchFilter.filterCategory]];
 
     [searchBar resignFirstResponder];
   

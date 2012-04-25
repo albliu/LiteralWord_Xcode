@@ -3,6 +3,13 @@
 #import "BookSelector.h"
 #import "ChapterSelector.h"
 
+@interface PassageSelector() {
+    BookSelector * selectBooks;
+    ChapterSelector * selectChapters;
+}
+
+@end 
+
 @implementation PassageSelector
 
 -(id) initWithFrame:(CGRect) f RootView:(id) v Book:(int) book Chapter:(int) chapter { 
@@ -18,10 +25,10 @@
 
 	[super loadView];
     self.view.frame = myframe;
-    BookSelector * myView = [[BookSelector alloc] initWithFrame:myframe RootView:self Book:select_book];
-    myView.view.tag = BOOK_SELECTOR_VIEW;
-	[self.view addSubview:myView.view];
-    //[myView dealloc];
+    selectBooks = [[BookSelector alloc] initWithFrame:myframe RootView:self Book:select_book] ;
+    selectBooks.view.tag = BOOK_SELECTOR_VIEW;
+	[self.view addSubview:selectBooks.view];
+    //[myView release];
 	
 }
 
@@ -52,9 +59,9 @@
             if (ch_count < select_chapter) {
                 select_chapter = ch_count;
             }
-            ChapterSelector * myView = [[ChapterSelector alloc] initWithFrame:myframe RootView:self Numbers:ch_count];
-            [self.view addSubview:myView.view];
-            //[myView dealloc];
+            selectChapters = [[ChapterSelector alloc] initWithFrame:myframe RootView:self Numbers:ch_count];
+            [self.view addSubview:selectChapters.view];
+            //[myView release];
         }
     }
     
@@ -69,4 +76,9 @@
     selected = NO;
 }
 
+- (void) dealloc {
+    [selectBooks release];
+    [selectChapters release];
+    [super dealloc];
+}
 @end

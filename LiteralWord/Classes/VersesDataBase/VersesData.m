@@ -5,12 +5,14 @@
 @synthesize myDB=_myDB;
 
 - (id) init {
-    self.myDB = nil;
-    self.myVerses = [[NSMutableArray alloc] initWithCapacity:10];
-		
-    return self;
+    
+    id me = [super init];
+    if (me) {
+        _myDB = nil;
+        _myVerses = [[NSMutableArray alloc] initWithCapacity:10];
+    }
+    return me;
 }
-
 
 - (void) clear {
 	[self.myDB deleteAllVerses];
@@ -41,8 +43,8 @@
 }
 
 - (void) dealloc {
-	[self.myDB release];	
-	[self.myVerses release];
+	[_myDB release];	
+	[_myVerses release];
 	[super dealloc];
 }
 

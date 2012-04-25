@@ -67,7 +67,7 @@
 }
 
 - (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component{
-	NSString * title;
+	NSString * title = nil;
 	if (component == 0 )
 		title =  [BibleDataBaseController getBookNameAt:row];
 	else if (component == 1)

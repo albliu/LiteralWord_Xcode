@@ -27,7 +27,7 @@ static sqlite3 *database = nil;
 
 + (NSString *) CreateTableString {
 
-	return [[NSString alloc] initWithFormat:@"CREATE TABLE IF NOT EXISTS %s (%s integer primary key autoincrement, %s text not null, %s text not null);",
+	return [NSString stringWithFormat:@"CREATE TABLE IF NOT EXISTS %s (%s integer primary key autoincrement, %s text not null, %s text not null);",
 		NOTES_TABLE,
 		KEY_ROWID, 
 		KEY_TITLE, 
@@ -136,15 +136,15 @@ static sqlite3 *database = nil;
 
 			while(sqlite3_step(statement) == SQLITE_ROW) {
 				
-				result = [[NoteEntry alloc] 
+				result = [[[NoteEntry alloc] 
 					initWithTitle: [NSString stringWithFormat:@"%s", sqlite3_column_text(statement,1)] 
 					Body: [NSString stringWithFormat:@"%s", sqlite3_column_text(statement,2)] 
-					ID: sqlite3_column_int(statement, 0)];	
+					ID: sqlite3_column_int(statement, 0)] autorelease];	
 
 			}
 			sqlite3_finalize(statement);
 		}
-	return [result autorelease];
+	return result;
 }
 
 - (void) updateNote:(NoteEntry *) note {
@@ -205,7 +205,6 @@ static sqlite3 *database = nil;
 			} else {
 				NSLog(@"error creating table\n");
 			}
-			[createTable release];
 		} else {
 			NSLog(@"error deleting table\n");
 		}

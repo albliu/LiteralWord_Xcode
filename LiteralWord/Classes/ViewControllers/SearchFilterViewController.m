@@ -33,8 +33,8 @@
     
     if (filterCategory) {
         filterCategory = NO;
-        self.myBookView = [[SearchFilterBook alloc] initWithCategory:self.myCategoryView.filterResults];
-        self.view = self.myBookView.view;
+        _myBookView = [[SearchFilterBook alloc] initWithCategory:self.myCategoryView.filterResults];
+        self.view = _myBookView.view;
         [self.navigationItem.rightBarButtonItem setTitle:@"Categories"];
         self.navigationItem.title = @"Books";
         
@@ -43,7 +43,7 @@
         self.view = self.myCategoryView.view;
         [self.navigationItem.rightBarButtonItem setTitle:@"Books"];
         self.navigationItem.title = @"Categories";
-        [self.myBookView release];
+        [_myBookView release];
         self.myBookView = nil;
     }
     
@@ -53,8 +53,8 @@
     
     if (filterCategory) self.view = self.myCategoryView.view;
     else {
-        self.myBookView = [[SearchFilterBook alloc] initWithCategory:self.myCategoryView.filterResults];
-        self.view = self.myBookView.view;
+        _myBookView = [[SearchFilterBook alloc] initWithCategory:self.myCategoryView.filterResults];
+        self.view = _myBookView.view;
         
     }
     
@@ -85,8 +85,8 @@
 - (void) dealloc {
     
     
-    [self.myBookView release];
-    [self.myCategoryView release];
+    [_myBookView release];
+    [_myCategoryView release];
     [super dealloc];
 }
 @end
