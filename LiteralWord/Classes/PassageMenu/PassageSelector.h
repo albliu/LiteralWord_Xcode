@@ -10,7 +10,7 @@ enum {
 	int select_book;
 	int select_chapter;
     
-    BOOL selected;
+    BOOL dismiss;
     
 }
 

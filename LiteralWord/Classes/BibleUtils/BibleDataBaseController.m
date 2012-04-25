@@ -37,6 +37,10 @@
 	return self;
 }
 
+- (id) copy {
+    return [[self.class alloc] initWithName:self.name Count:self.count];
+}
+
 @end
 
 @implementation BibleDataBaseController
@@ -56,13 +60,13 @@ static sqlite3 *bibleDB;
 + (NSString *) getBookNameAt:(int) idx {
 	BookName* bk = [books objectAtIndex:idx];
 	if (bk == nil) return nil;
-	return bk.name; 
+	return [NSString stringWithString:bk.name]; 
 }
 
-+ (NSNumber *) getBookChapterCountAt:(int) idx {
++ (int) getBookChapterCountAt:(int) idx {
 	BookName* bk = [books objectAtIndex:idx];
-	if (bk == nil) return nil;
-	return bk.count; 
+	if (bk == nil) return -1;
+	return [bk.count intValue]; 
 
 }
 + (void) initBibleDataBase {
@@ -76,8 +80,8 @@ static sqlite3 *bibleDB;
 	}
 
 
-
-	books = [[NSArray alloc] initWithArray:[self.class listBibleContents]];
+    // initialize books
+	[self.class listBibleContents];
 	maxBooks = [books count];
 }
 
@@ -85,10 +89,11 @@ static sqlite3 *bibleDB;
 	return maxBooks;
 }
 + (NSArray *) listBibleContents {
-
-	sqlite3_stmt    *statement;
-	NSMutableArray *result = nil;
-
+	
+    if (books == nil) {
+        sqlite3_stmt    *statement;
+        NSMutableArray *result = nil;
+        
 		NSString *querySQL = [NSString stringWithFormat: 
 			@"SELECT %@,%@ FROM %@",
 			@BOOK_HUMAN_ROWID, @BOOK_CHAPTERS_ROWID,
@@ -97,21 +102,23 @@ static sqlite3 *bibleDB;
 
 		const char *query_stmt = [querySQL UTF8String];
 		if(sqlite3_prepare_v2(bibleDB, query_stmt, -1, &statement, NULL) == SQLITE_OK) {
-			result = [[NSMutableArray alloc] initWithCapacity:1];
+			result = [[[NSMutableArray alloc] initWithCapacity:1] autorelease];
 			while(sqlite3_step(statement) == SQLITE_ROW) {
 				const unsigned char *text = sqlite3_column_text(statement, 0);
 				int nChap = sqlite3_column_int(statement, 1);
-				BookName * books =[[BookName alloc] initWithName:[NSString stringWithFormat:@"%s", text] Count: [NSNumber numberWithInt:nChap]];
-				[result addObject:books];
-				[books release];
+				BookName * book =[[BookName alloc] initWithName:[NSString stringWithFormat:@"%s", text] Count: [NSNumber numberWithInt:nChap]];
+				[result addObject:book];
+				[book release];
 				
 			}
 			sqlite3_finalize(statement);
 		}
-
-    NSArray * ret = [NSArray arrayWithArray:result];
-    [result release];
-	return ret;
+        
+        books = [[NSArray alloc] initWithArray:result];
+        
+    } 
+    
+	return [NSArray arrayWithArray: books];
 
 }
 
@@ -131,23 +138,6 @@ static sqlite3 *bibleDB;
 		if(sqlite3_prepare_v2(bibleDB, query_stmt, -1, &statement, NULL) == SQLITE_OK) {
 			result = [NSMutableArray array];
 			while(sqlite3_step(statement) == SQLITE_ROW) {
-/*				for (int i=0; i<sqlite3_column_count(statement); i++) {
-					int colType = sqlite3_column_type(statement, i);
-					id value;
-					if (colType == SQLITE_TEXT) {
-						const unsigned char *text = sqlite3_column_text(statement, 3);
-						value = [NSString stringWithFormat:@"%s", text];
-					} else if (colType == SQLITE_INTEGER) {
-						int col = sqlite3_column_int(statement, 2);
-						value = [NSNumber numberWithInt:col];
-					} else if (colType == SQLITE_NULL) {
-						value = [NSNull null];
-					} else {
-						NSLog(@"[SQLITE] UNKNOWN DATATYPE");
-					}
- 
-				}
-*/
 				const unsigned char *text = sqlite3_column_text(statement, 3);
 				int ver = sqlite3_column_int(statement, 2);
 				int head = sqlite3_column_int(statement, 1);

@@ -5,7 +5,7 @@
 @implementation BookSelector
 
 
--(BookSelector *) initWithFrame:(CGRect) f RootView:(id) del Book:(int)bk{ 
+-(id) initWithFrame:(CGRect) f RootView:(id) del Book:(int)bk{ 
     initBook = bk;
     bookData = [[NSArray alloc] initWithArray:[BibleDataBaseController listBibleContents]];
 	return [super initWithFrame: f RootView:del];

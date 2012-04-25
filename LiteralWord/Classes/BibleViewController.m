@@ -107,7 +107,7 @@
 
 - (void) nextPassage {
 	int maxBook = [BibleDataBaseController maxBook];	
-	int max = [[BibleDataBaseController getBookChapterCountAt:curr_book] intValue];
+	int max = [BibleDataBaseController getBookChapterCountAt:curr_book] ;
 	if (curr_chapter >= max) {
 		if (curr_book < maxBook ) {
 			curr_chapter = 1;
@@ -124,7 +124,7 @@
 	if (curr_chapter == 1) {
 		if (curr_book > 0 ) {
 			curr_book--;
-			curr_chapter = [[BibleDataBaseController getBookChapterCountAt:curr_book] intValue];
+			curr_chapter = [BibleDataBaseController getBookChapterCountAt:curr_book] ;
 		}
 	} else curr_chapter--;
 
@@ -213,16 +213,15 @@
 
 #pragma mark Selector Views
 
-- (void) SelectorViewDismissed {
+- (void) SelectorViewDismissed : (SelectorViewController *) selectorView {
+    [selectorView release];
 	[[self myDelegate] unLockScreen];
 
 }
 
 - (void)passagemenu:(id)ignored {
-	NSLog(@"switch passage");
 
 	[[self myDelegate] lockScreen];
-    if (passageSel != nil) [passageSel release];
     
 	passageSel = [[PassageSelector alloc] initWithFrame: self.view.bounds RootView:self Book:curr_book Chapter:curr_chapter ] ; 
 
@@ -234,7 +233,6 @@
 	
 	[[self myDelegate] lockScreen];
     
-    if (verseSel != nil) [verseSel release];
     
 	verseSel = [[VerseSelector alloc] initWithFrame: self.view.bounds RootView:self Numbers:[BibleDataBaseController getVerseCount:[[BibleDataBaseController getBookNameAt:curr_book] UTF8String] chapter:curr_chapter]]; 
 	[self.view addSubview:verseSel.view];

@@ -15,5 +15,5 @@
 
 }
 
--(BookSelector *) initWithFrame:(CGRect) f RootView:(id) del Book:(int)bk;
+-(id) initWithFrame:(CGRect) f RootView:(id) del Book:(int)bk;
 @end

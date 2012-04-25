@@ -295,8 +295,8 @@
 }
 #pragma mark UIPopoverController delegate
 - (BOOL) popoverControllerShouldDismissPopover:(UIPopoverController *)popoverController {
-    popover_currview = -1;
-    return YES;
+    [self SelectedEntry];
+    return NO;
 }
 
 #pragma mark UIViewController delegate

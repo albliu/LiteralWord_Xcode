@@ -46,8 +46,9 @@
 }
 
 - (void) dismissMyView {
-    [[self rootview] SelectorViewDismissed];
+    
 	[self.view removeFromSuperview];
+    [[self rootview] SelectorViewDismissed:self];
 	
 }
 @end

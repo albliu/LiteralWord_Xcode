@@ -4,11 +4,14 @@
 
 - (id) init {
 
-    _myDB = [[VersesDataBaseController alloc] initDataBase:DATABASE_MEMVERSE_TABLE];
-    NSArray * tmp =  [[NSArray alloc] initWithArray:[self.myDB findAllVerses]];
-    _myVerses = [tmp mutableCopy];
-    [tmp release];
-		
+    id me = [super init];
+    if (me) {
+        // super init will have allocated NSArray already;
+        [_myVerses release];
+        
+        _myDB = [[VersesDataBaseController alloc] initDataBase:DATABASE_MEMVERSE_TABLE];
+        _myVerses = [[NSMutableArray alloc] initWithArray:[self.myDB findAllVerses]];
+    }
     return self;
 }
 

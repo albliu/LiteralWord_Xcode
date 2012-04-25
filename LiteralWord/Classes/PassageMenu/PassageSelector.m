@@ -14,11 +14,14 @@
 
 -(id) initWithFrame:(CGRect) f RootView:(id) v Book:(int) book Chapter:(int) chapter { 
 		
-	select_book = book;
-	select_chapter = chapter;	
-    selected = NO;
-	self.modalPresentationStyle = UIModalPresentationFormSheet;
-	return [self initWithFrame:f RootView:v];
+    id me = [self initWithFrame:f RootView:v];
+    if (me) {
+        select_book = book;
+        select_chapter = chapter;	
+        dismiss = YES;
+        //self.modalPresentationStyle = UIModalPresentationFormSheet;
+    }
+    return me;
 }
 
 - (void) loadView {
@@ -28,18 +31,18 @@
     selectBooks = [[BookSelector alloc] initWithFrame:myframe RootView:self Book:select_book] ;
     selectBooks.view.tag = BOOK_SELECTOR_VIEW;
 	[self.view addSubview:selectBooks.view];
-    //[myView release];
+    
 	
 }
 
 - (void) commit {
     [self.rootview selectedbook:select_book chapter:select_chapter];
-    [self dismissMyView];
+    dismiss = YES;
 }
 
 - (void) selectedbook:(int)bk chapter:(int)ch {
     // if bk = -1, we're coming from chapter selector
-    selected = YES;
+    dismiss = NO;
     
     if (bk == -1) {
         select_chapter = ch;
@@ -49,7 +52,7 @@
         // book select
         
         select_book = bk;
-        int ch_count = [[BibleDataBaseController getBookChapterCountAt:bk] intValue];
+        int ch_count = [BibleDataBaseController getBookChapterCountAt:bk];
         
         
         if (ch_count == 1) {
@@ -61,24 +64,28 @@
             }
             selectChapters = [[ChapterSelector alloc] initWithFrame:myframe RootView:self Numbers:ch_count];
             [self.view addSubview:selectChapters.view];
-            //[myView release];
+            
         }
     }
     
 }
 
-- (void) SelectorViewDismissed {
-    [self.rootview SelectorViewDismissed];
+- (void) SelectorViewDismissed : (SelectorViewController *) selectorView {
+    [selectorView release];
     
-    if (selected == NO) // side button first
+    if (dismiss == YES) // side button first
         [self dismissMyView];
     
-    selected = NO;
+    dismiss = YES;
 }
 
 - (void) dealloc {
+
+/*  
+    // these will be dealloced in dismissMyView in BibleViewController    
     [selectBooks release];
     [selectChapters release];
+*/  
     [super dealloc];
 }
 @end
