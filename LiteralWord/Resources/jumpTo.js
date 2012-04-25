@@ -36,6 +36,7 @@ function highlight(id) {
 	for (var i = 0; i < dchild.length; i++) {
 		dchild[i].firstChild.className = elem.className;
 	}
+    selectedVerses.push(elem.id);
 }
 
 function unhighlight(id) {
@@ -48,6 +49,9 @@ function unhighlight(id) {
 	for (var i = 0; i < dchild.length; i++) {
 		dchild[i].firstChild.className = elem.className;
 	}
+
+    // don't need to remove from selectedVerse
+    // we only call this function from clearhighlight
 }
 
 function highlightPoint(x, y) {
