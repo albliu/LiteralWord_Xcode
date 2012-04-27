@@ -183,6 +183,13 @@ int currRotation;
     
     return [searchResults count];
 }
+- (void) clear:(id) ignore {
+    mySearchBar.text = nil;
+    [searchResults release];
+    searchResults = nil;
+	[myTableView reloadData];
+    [myTableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
+}
 
 - (void) enableCancelButton:(UISearchBar *) searchBar {
     for (id subview in [searchBar subviews]) {
@@ -233,13 +240,7 @@ int currRotation;
     [myLoading release];
     [super dealloc];
 }
-- (void) clear:(id) ignore {
-    mySearchBar.text = nil;
-    [searchResults release];
-    searchResults = nil;
-	[myTableView reloadData];
-    [myTableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
-}
+
 
 - (void) filterView:(id) ignored {
     [self.navigationController pushViewController:searchFilter animated:YES];
