@@ -57,35 +57,53 @@ int currRotation;
 - (void) loadView {
 	[super loadView];
     currRotation = 0;
-	myLoading = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-
-	myLoading.center = self.view.center;
-	[self.view addSubview:myLoading];
+	
 }
 
 - (void)viewDidLoad
 {
  
-
-    searchData = [[NSMutableArray alloc] initWithCapacity:1];
-    loadedCount =0;
-    mySearchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, SEARCHBAR_HEIGHT)];
+    [super viewDidLoad];
+    
+    if (!myTableView && [self.view isKindOfClass:[UITableView class]]) {
+        myTableView = (UITableView *) self.view;
+    }
+    
+    
+    self.view = [[[UIView alloc] initWithFrame:myTableView.frame] autorelease];
+    NSLog(@"frame: %@", NSStringFromCGRect(self.view.frame));
+    // a little hackish, but change the width to 320 manually
+    mySearchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, 320, SEARCHBAR_HEIGHT)];
     mySearchBar.delegate = self;
     [mySearchBar becomeFirstResponder];
+    [mySearchBar setShowsCancelButton:YES];
     
-    self.tableView.rowHeight = (VERSE_LABEL_HEIGHT + VERSE_TEXT_HEIGHT + 2*CELL_SPACING);
-    self.tableView.tableHeaderView = mySearchBar;
+    myTableView.frame = CGRectMake(0, SEARCHBAR_HEIGHT, myTableView.frame.size.width, myTableView.frame.size.height - SEARCHBAR_HEIGHT);
+
+    
+    
+    searchData = [[NSMutableArray alloc] initWithCapacity:1];
+    loadedCount =0;
+    
+    
+    [self.view addSubview:myTableView];
+    [self.view addSubview:mySearchBar];
+    
+    myTableView.rowHeight = (VERSE_LABEL_HEIGHT + VERSE_TEXT_HEIGHT + 2*CELL_SPACING);
+    //self.tableView.tableHeaderView = mySearchBar;
    
+    myLoading = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    
+	myLoading.center = self.view.center;
+	[self.view addSubview:myLoading];
 
     searchFilter = [[SearchFilterViewController alloc] init];
     
-    UIBarButtonItem * filter = [[UIBarButtonItem alloc] initWithTitle:@"Filter" style:UIBarButtonItemStyleDone target:self action:@selector(filterView:)];
-   
-    
+    UIBarButtonItem * filter = [[UIBarButtonItem alloc] initWithTitle:@"Filter" style:UIBarButtonItemStylePlain target:self action:@selector(filterView:)];
 	self.navigationItem.rightBarButtonItem = filter;
     [filter release];
 
-    [self.tableView reloadData];	// populate our table's data
+    [myTableView reloadData];	// populate our table's data
     
 }
 
@@ -166,10 +184,25 @@ int currRotation;
     return [searchResults count];
 }
 
+- (void) enableCancelButton:(UISearchBar *) searchBar {
+    for (id subview in [searchBar subviews]) {
+        if ([subview isKindOfClass:[UIButton class]]) [subview setEnabled:YES];
+    }
+}
+
+- (void) searchBarTextDidEndEditing:(UISearchBar *)searchBar {
+    
+    [searchBar resignFirstResponder];
+    [self performSelector:@selector(enableCancelButton:) withObject:searchBar afterDelay:0.0];
+}
+
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar
 {
 
     NSArray * filter;
+    
+    [myLoading startAnimating];
+    
     if (searchFilter.filterCategory) filter = [searchFilter.myCategoryView filterArray];    
     else filter = [searchFilter.myBookView filterArray];
     
@@ -178,8 +211,14 @@ int currRotation;
 
     [searchBar resignFirstResponder];
   
-    [self.tableView reloadData];
+    [myTableView reloadData];
+    
+    [myLoading stopAnimating];
 
+}
+
+- (void) searchBarCancelButtonClicked:(UISearchBar *)searchBar {
+    [self clear:nil];
 }
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)activeScrollView {
@@ -189,15 +228,17 @@ int currRotation;
 - (void)dealloc {
     [searchData release];
      [mySearchBar release];
-    searchResults = nil;
+    if (searchResults) [searchResults release];
     [searchFilter release];
     [myLoading release];
     [super dealloc];
 }
-- (void) clear:(id) ignored {
+- (void) clear:(id) ignore {
+    mySearchBar.text = nil;
+    [searchResults release];
     searchResults = nil;
-	[self.tableView reloadData];
-    [self.tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
+	[myTableView reloadData];
+    [myTableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
 }
 
 - (void) filterView:(id) ignored {

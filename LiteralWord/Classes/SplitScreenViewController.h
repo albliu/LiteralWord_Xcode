@@ -22,7 +22,7 @@ enum {
 	BibleViewController * _bibleView;
 	BibleViewController * _secbibleView;
 	SearchViewController * _searchView;
-
+    UINavigationController * notesView;
 
     UIPopoverController * popover;
     int popover_currview;

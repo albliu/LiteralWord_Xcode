@@ -1,4 +1,5 @@
 #import "NotesViewController.h"
+#import <objc/runtime.h>
 
 
 @implementation NotesViewController
@@ -6,7 +7,9 @@
 @synthesize myedit = _myedit;
 
 - (NotesEditViewController *) myedit {
+    
     if (_myedit == nil) { 
+        NSLog(@"my parent %s", class_getName(self.navigationController.parentViewController.class));
         _myedit = [[NotesEditViewController alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
         _myedit.myDelegate = self;
     }
@@ -38,7 +41,7 @@
 
 - (void) viewDidLoad {
 
-	UIBarButtonItem *new = [[UIBarButtonItem alloc] initWithTitle:@"New" style:UIBarButtonItemStyleDone target:self action:@selector(newnote:)];
+	UIBarButtonItem *new = [[UIBarButtonItem alloc] initWithTitle:@"New" style:UIBarButtonItemStylePlain target:self action:@selector(newnote:)];
 
 	self.navigationItem.rightBarButtonItem = new;
 	[new release];

@@ -44,22 +44,15 @@
         [self.navigationItem.rightBarButtonItem setTitle:@"Books"];
         self.navigationItem.title = @"Categories";
         [_myBookView release];
-        self.myBookView = nil;
+        _myBookView = nil;
     }
     
 }
 - (void) loadView {
     [super loadView];
     
-    if (filterCategory) self.view = self.myCategoryView.view;
-    else {
-        _myBookView = [[SearchFilterBook alloc] initWithCategory:self.myCategoryView.filterResults];
-        self.view = _myBookView.view;
-        
-    }
-    
-    self.navigationItem.title = @"Categories";
-    
+    filterCategory = NO;
+    [self switchFilter];
 }
 - (void)viewDidLoad
 {
@@ -84,8 +77,7 @@
 
 - (void) dealloc {
     
-    
-    [_myBookView release];
+    if (_myBookView) [_myBookView release];
     [_myCategoryView release];
     [super dealloc];
 }

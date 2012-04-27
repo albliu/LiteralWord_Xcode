@@ -1,7 +1,6 @@
 #import "SplitScreenViewController.h"
 #import "BibleUtils/BibleUtils.h"
 
-
 @implementation SplitScreenViewController
 
 @synthesize dualView;
@@ -169,6 +168,7 @@
             myView.title = @"History"; 
             if (dualView) myView.delegate = self.secbibleView;
             break;
+
         default:
             return;
             break;
@@ -181,6 +181,8 @@
     popover = [[UIPopoverController alloc] initWithContentViewController:navView];
     [navView release];
     popover.delegate = self;
+    if (but.tag == SEARCH_VIEW) 
+        popover.passthroughViews = [[[NSArray alloc] initWithObjects:self.secbibleView.view, nil] autorelease];
     
     [popover presentPopoverFromBarButtonItem:but permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];    
 }
@@ -194,13 +196,40 @@
 }
 
 
-- (void) notes:(id)ignored {
-
+- (void) notes:(UIBarButtonItem *)but {
+    BOOL ret = (popover_currview == but.tag);
     [self clearPopovers];
-	NotesViewController * myView = [[[NotesViewController alloc] initWithNotes:notes] autorelease];
-	myView.title = @"Notes"; 
-	[self.navigationController pushViewController:myView animated:YES];
-	
+    if (ret) return;
+
+    if (notesView == nil) {
+        NotesViewController * myView = [[[NotesViewController alloc] initWithNotes:notes] autorelease];
+        myView.title = @"Notes"; 
+        myView.navigationItem.leftBarButtonItem = [[[UIBarButtonItem alloc] initWithTitle:@"Full" style:UIBarButtonItemStylePlain target:self action:@selector(fullnotes:)] autorelease];
+
+        notesView= [[UINavigationController alloc] initWithRootViewController:myView];
+        notesView.contentSizeForViewInPopover = CGSizeMake(400, self.view.frame.size.height);
+        
+    }
+
+        
+    popover = [[UIPopoverController alloc] initWithContentViewController:notesView];
+    popover.delegate = self;
+    popover_currview = but.tag;
+
+    [popover presentPopoverFromBarButtonItem:but permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];    
+
+       //		
+
+}
+
+- (void) fullnotes: (id) ignore {
+    [self clearPopovers];
+    [notesView release];
+    notesView = nil;
+    
+    NotesViewController * myView = [[[NotesViewController alloc] initWithNotes:notes] autorelease];
+    myView.title = @"Notes";
+    [self.navigationController pushViewController:myView animated:YES];
 
 }
 
@@ -254,10 +283,20 @@
 
     return [mySelector autorelease];
 }
-
+/*
+- (void) fullscreen:(id) ignored {
+    MemoryViewController * myView = [[[MemoryViewController alloc] initWithDelegate:self.bibleView Data:memory] autorelease];
+                                     
+    myView.title = @"Memory";
+    myView.modalPresentationStyle = UIModalPresentationFormSheet;
+    
+    //[self.navigationController pushViewController:myView animated:YES];
+    [self presentModalViewController:myView animated:YES];
+}
+*/
 - (void) fullscreen:(id)ignored {
 
-
+    [self clearPopovers];
 	if (dualView == YES) {
 		self.bibleView.view.frame = CGRectMake(BORDER_OFFSET, 0, self.view.bounds.size.width - 2 * BORDER_OFFSET, self.view.bounds.size.height);
         self.secbibleView.view.hidden = YES;
@@ -293,6 +332,7 @@
     }
 
 }
+ 
 #pragma mark UIPopoverController delegate
 - (BOOL) popoverControllerShouldDismissPopover:(UIPopoverController *)popoverController {
     [self SelectedEntry];
@@ -345,6 +385,7 @@
 	[_bibleView release];	
 	[_secbibleView release];	
 	[_searchView release];	
+    if (notesView) [notesView release];
 	[super dealloc];
 }
 

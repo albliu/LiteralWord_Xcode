@@ -29,7 +29,7 @@
 
 - (void) viewDidLoad {
 
-	UIBarButtonItem *clear = [[UIBarButtonItem alloc] initWithTitle:@"Clear" style:UIBarButtonItemStyleDone target:self action:@selector(clear:)];
+	UIBarButtonItem *clear = [[UIBarButtonItem alloc] initWithTitle:@"Clear" style:UIBarButtonItemStylePlain target:self action:@selector(clear:)];
 
 	self.navigationItem.rightBarButtonItem = clear;
 	[clear release];
