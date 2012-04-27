@@ -20,7 +20,7 @@
 
 -(BibleViewController *) bibleView{
 	if (!_bibleView) {
-		_bibleView = [[BibleViewController alloc] initWithFrame:CGRectMake(BORDER_OFFSET,0, self.view.bounds.size.width - 2*BORDER_OFFSET, self.view.bounds.size.height)];
+		_bibleView = [[BibleViewController alloc] initWithFrame:CGRectMake(BORDER_OFFSET,0, self.view.frame.size.width - 2*BORDER_OFFSET, self.view.frame.size.height)];
 		_bibleView.myDelegate = self;
 	}
 	return _bibleView;
@@ -298,7 +298,7 @@
 
     [self clearPopovers];
 	if (dualView == YES) {
-		self.bibleView.view.frame = CGRectMake(BORDER_OFFSET, 0, self.view.bounds.size.width - 2 * BORDER_OFFSET, self.view.bounds.size.height);
+		self.bibleView.view.frame = CGRectMake(BORDER_OFFSET, 0, self.view.frame.size.width - 2 * BORDER_OFFSET, self.view.frame.size.height);
         self.secbibleView.view.hidden = YES;
         
         self.navigationItem.titleView = self.bibleView.passageTitle;
@@ -310,12 +310,13 @@
         
         
 	} else {
-		self.bibleView.view.frame = CGRectMake(BORDER_OFFSET, 0, self.view.bounds.size.width/2 - 2 * BORDER_OFFSET, self.view.bounds.size.height);
+		self.bibleView.view.frame = CGRectMake(BORDER_OFFSET, 0, self.view.frame.size.width/2 - 2 * BORDER_OFFSET, self.view.frame.size.height);
         
         if (_secbibleView == nil) {
-            _secbibleView = [[BibleViewController alloc] initWithFrame:CGRectMake(self.view.bounds.size.width/2 + BORDER_OFFSET, 0, self.view.bounds.size.width/2 - 2 * BORDER_OFFSET, self.view.bounds.size.height)];
+            _secbibleView = [[BibleViewController alloc] initWithFrame:CGRectMake(self.view.frame.size.width/2 + BORDER_OFFSET, 0, self.view.frame.size.width/2 - 2 * BORDER_OFFSET, self.view.frame.size.height)];
             _secbibleView.myDelegate = self;
             [self.view addSubview:_secbibleView.view];
+            _secbibleView.view.autoresizingMask |= UIViewAutoresizingFlexibleLeftMargin;
             
         } else {
             self.secbibleView.view.hidden = NO;
@@ -367,6 +368,7 @@
 	self.view.backgroundColor = [UIColor SHEET_BLUE];
 
 	[self.view addSubview:self.bibleView.view];
+    self.bibleView.view.autoresizingMask |= UIViewAutoresizingFlexibleRightMargin;
 
     dualView = NO;
 

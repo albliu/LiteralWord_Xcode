@@ -33,7 +33,7 @@
 
 -(UIWebView *) webView{
 	if (_webView == nil) { 
-		_webView = [[UIWebView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height)];
+		_webView = [[UIWebView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
 		_webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
 		[_webView setDelegate:self];
         _webView.scrollView.bounces = NO;
